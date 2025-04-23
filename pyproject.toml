@@ -1,0 +1,25 @@
+[project]
+name = "dearfy"
+version = "0.1.0"
+description = "A library for simplifying the creation of complex GUIs using DearPyGUI."
+authors = [
+    {name = "Romanin", email = "semina054@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "dearpygui (>=2.0.0,<3.0.0)",
+    "typing-extensions (>=4.13.2,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+poetry = "^2.1.2"
+poetry-plugin-shell = "^1.0.1"
+poetry-plugin-export = "^1.9.0"
+
