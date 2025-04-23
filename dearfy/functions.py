@@ -1,0 +1,55 @@
+import dearpygui.dearpygui as dpg
+from typing_extensions import Literal, Iterable
+
+# ! For DearPyGUI Methods
+
+def get_item_size(item: str | int, *, wait: bool=False) -> tuple[float, float]:
+    if wait:
+        for _ in range(3):
+            dpg.split_frame(delay=1)
+    return float(dpg.get_item_width(item)), float(dpg.get_item_height(item))
+
+def match_item_position(
+    item: str | int,
+    x_justing: Literal['left', 'center', 'right']='center',
+    y_justing: Literal['top', 'center', 'bottom']='center',
+    padding: tuple[int, int, int, int] | Iterable[int] = (0, 0, 0, 0),
+    # (left, right, top, bottom)
+    *,
+    wait: bool=False
+) -> tuple[float, float]:
+    # * Checking
+    assert isinstance(padding, Iterable), TypeError(padding)
+    padding = tuple(padding)
+    assert len(padding) >= 4, ValueError(padding)
+    padding = padding[:4]
+    # * Getting
+    item_width, item_height = get_item_size(item, wait=wait)
+    vp_width, vp_height = dpg.get_viewport_width(), dpg.get_viewport_height()
+    if (item_width >= 1) and (item_height >= 1):
+        pass
+    else:
+        if dpg.does_item_exist(item):
+            item_width, item_height = get_item_size(item, wait=True)
+            match x_justing:
+                case 'center':
+                    pass
+                case 'left':
+                    pass
+                case 'right':
+                    pass
+                case _:
+                    raise ValueError(f'{x_justing=!r}')
+        else:
+            raise RuntimeError(f'There is no object with this tag/id: {item!r}')
+    return
+
+"""Calculates the position of an object relative to the size of the viewport
+
+:param item: Tag or id of DearPyGUI object
+:type item: str | int
+:param wait: Waiting for the window to be fully prepared, defaults to False
+:type wait: bool, optional
+:return: Object position
+:rtype: tuple[float, float]
+"""
