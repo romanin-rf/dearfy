@@ -14,7 +14,6 @@ def match_item_position(
     x_justing: Literal['left', 'center', 'right']='center',
     y_justing: Literal['top', 'center', 'bottom']='center',
     padding: tuple[int, int, int, int] | Iterable[int] = (0, 0, 0, 0),
-    # (left, right, top, bottom)
     *,
     wait: bool=False
 ) -> tuple[float, float]:
