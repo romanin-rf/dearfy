@@ -1,19 +1,15 @@
-import sys
 from dearfy.app import App
-from dearfy.base import Item, Container
+from dearfy.widgets.text import Text
+from dearfy.widgets.window import Window
 from rich.console import Console
 
 # ! Types
 
 class MyApp(App):
     def compose(self):
-        yield Item()
-        yield Item()
-        with Container():
-            yield Item()
-            with Container():
-                yield Item()
-        yield Item()
+        with Window(label='Title'):
+            with Text('test'):
+                pass
 
 # ! Variables
 
@@ -21,11 +17,14 @@ console = Console()
 
 # ! Main
 
-def main(*argv: str) -> int:
-    console.print(MyApp()._to_rich_tree())
-    return 0
+def main():
+    app = MyApp()
+    app.run()
 
 # ! Start
 
 if __name__ == '__main__':
-    exit(main(*sys.argv))
+    try:
+        main()
+    except:
+        console.print_exception(width=console.width, show_locals=True)

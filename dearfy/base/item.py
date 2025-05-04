@@ -20,14 +20,14 @@ class ItemKwargs(TypedDict):
 
 class Item(DOMNode):
     __node_containerable__ = False
-
+    
     def __init__(
         self,
         *,
         label: str='',
         user_data: Any | None = None,
         use_internal_label: bool = True,
-        tag: Tag | None = None,
+        tag: Tag = 0,
         indent: int = -1,
         show: bool = True,
         pos: Position = [],
@@ -45,28 +45,36 @@ class Item(DOMNode):
             'pos': pos,
             **kwargs
         }
-        self._inited = False
     
     def __str__(self) -> str:
         return f'{self.__class__.__name__}({formatting_kwargs(**self._config)})'
-
+    
     @property
     def tag(self) -> Tag:
         return self._config['tag']
     
     @property
-    def app(self) -> object:
+    def app(self) -> object | None:
         return self._app
     
-    def __dearfy_reinit__(self, app: object) -> None:
+    @property
+    def inited(self) -> bool:
+        return self._config['tag'] != 0
+    
+    def __dearfy_preparing__(self, app: object) -> None:
         self._app = app
+    
+    def __dearfy_preinit__(self) -> None:
+        pass
     
     def __dearfy_init__(self) -> None:
         pass
     
+    def __dearfy_postinit__(self) -> None:
+        pass
+    
     def get_configuration(self) -> dict[str, Any]:
         configuration = dpg.get_item_configuration()
-        self._config.update(configuration)
         return configuration
     
     def configurate(self, **kwargs: object) -> None:
@@ -82,7 +90,7 @@ class Item(DOMNode):
     def show(self) -> None:
         if self._inited:
             dpg.show_item(self.tag)
-
+    
     def hide(self) -> None:
         if self._inited:
             dpg.hide_item(self.tag)

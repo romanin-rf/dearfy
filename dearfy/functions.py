@@ -1,10 +1,28 @@
+import inspect
 import dearpygui.dearpygui as dpg
-from typing_extensions import Literal, Iterable
+from typing_extensions import Any, Literal, Iterable, Callable, TypeVar
+
+# ! Types
+
+T = TypeVar('T')
 
 # ! String Formatting
 
 def formatting_kwargs(**kwargs: object) -> str:
     return ', '.join(f'{key}={value!r}' for key, value in kwargs.items())
+
+# ! Object Works
+
+def get_method_needed(method: Callable[..., Any], **kwargs: T) -> dict[str, T]:
+    params = {}
+    for name, param in inspect.signature(method).parameters.items():
+        if param.default is not param.empty:
+            params[name] = param.default
+    new_kwargs, needed = {}, method.__code__.co_varnames
+    for key, value in kwargs.items():
+        if (key in needed) and (params.get(key, NotImplemented) != value):
+            new_kwargs[key] = value
+    return new_kwargs
 
 # ! For DearPyGUI Methods
 
