@@ -1,14 +1,29 @@
-from turtle import tiltangle
 import dearpygui.dearpygui as dpg
-from typing_extensions import Any
+from typing_extensions import Any, TypedDict
 # > Local Imports
+from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag, Position
+from dearfy.functions import formatting_kwargs
+
+# ! Typing
+
+class ItemKwargs(TypedDict):
+    label: str
+    user_data: Any | None
+    use_internal_label: bool
+    tag: Tag | None
+    indent: int
+    show: bool
+    pos: Position
 
 # ! Base Widget Class
 
-class Item:
+class Item(DOMNode):
+    __node_containerable__ = False
+
     def __init__(
         self,
+        *,
         label: str='',
         user_data: Any | None = None,
         use_internal_label: bool = True,
@@ -18,8 +33,10 @@ class Item:
         pos: Position = [],
         **kwargs: object
     ) -> None:
-        self.__tag: Tag = tag if tag is not None else 0
-        self.__config = {
+        super().__init__()
+        self._app = None
+        self._config = {
+            'tag': tag,
             'label': label,
             'user_data': user_data,
             'use_internal_label': use_internal_label,
@@ -28,32 +45,44 @@ class Item:
             'pos': pos,
             **kwargs
         }
-        self.__inited = False
+        self._inited = False
     
+    def __str__(self) -> str:
+        return f'{self.__class__.__name__}({formatting_kwargs(**self._config)})'
+
     @property
     def tag(self) -> Tag:
-        return self.__tag
+        return self._config['tag']
+    
+    @property
+    def app(self) -> object:
+        return self._app
+    
+    def __dearfy_reinit__(self, app: object) -> None:
+        self._app = app
     
     def __dearfy_init__(self) -> None:
-        raise NotImplementedError
+        pass
     
-    def get_configurations(self) -> dict[str, Any]:
-        return self.__config.copy()
+    def get_configuration(self) -> dict[str, Any]:
+        configuration = dpg.get_item_configuration()
+        self._config.update(configuration)
+        return configuration
     
     def configurate(self, **kwargs: object) -> None:
-        if self.__inited:
+        if self._inited:
             dpg.configure_item(self.tag, **kwargs)
-            self.__config.update(**kwargs)
+            self._config.update(**kwargs)
     
     def destroy(self) -> None:
-        if self.__inited:
-            dpg.delete_item(self.__tag)
-            self.__inited = False
+        if self._inited:
+            dpg.delete_item(self.tag)
+            self._inited = False
     
     def show(self) -> None:
-        if self.__inited:
-            dpg.show_item(self.__tag)
+        if self._inited:
+            dpg.show_item(self.tag)
 
     def hide(self) -> None:
-        if self.__inited:
-            dpg.hide_item(self.__tag)
+        if self._inited:
+            dpg.hide_item(self.tag)

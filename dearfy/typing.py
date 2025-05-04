@@ -1,5 +1,4 @@
-from typing import Iterable
-from typing_extensions import TypeAlias
+from typing_extensions import Iterable, TypeAlias
 
 # ! DearPyGUI Typing
 

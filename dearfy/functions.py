@@ -1,6 +1,11 @@
 import dearpygui.dearpygui as dpg
 from typing_extensions import Literal, Iterable
 
+# ! String Formatting
+
+def formatting_kwargs(**kwargs: object) -> str:
+    return ', '.join(f'{key}={value!r}' for key, value in kwargs.items())
+
 # ! For DearPyGUI Methods
 
 def get_item_size(item: str | int, *, wait: bool=False) -> tuple[float, float]:

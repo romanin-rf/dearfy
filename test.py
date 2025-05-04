@@ -1,8 +1,31 @@
-import dateutil.parser
-from 
+import sys
+from dearfy.app import App
+from dearfy.base import Item, Container
+from rich.console import Console
 
-START_DATE = '10.08.2005'
+# ! Types
 
-DT = dateutil.parser.parse(START_DATE)
+class MyApp(App):
+    def compose(self):
+        yield Item()
+        yield Item()
+        with Container():
+            yield Item()
+            with Container():
+                yield Item()
+        yield Item()
 
-# (datetime.now() - datetime(2005, 8, 10, 3, 0)).total_seconds() / 60 / 60 / 24 / 365
+# ! Variables
+
+console = Console()
+
+# ! Main
+
+def main(*argv: str) -> int:
+    console.print(MyApp()._to_rich_tree())
+    return 0
+
+# ! Start
+
+if __name__ == '__main__':
+    exit(main(*sys.argv))
