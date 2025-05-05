@@ -3,6 +3,7 @@ from typing_extensions import Any, TypedDict
 # > Local Imports
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag, Position
+from dearfy.field import field
 from dearfy.functions import formatting_kwargs
 
 # ! Typing
@@ -27,7 +28,7 @@ class Item(DOMNode):
         label: str='',
         user_data: Any | None = None,
         use_internal_label: bool = True,
-        tag: Tag = 0,
+        tag: Tag | None = None,
         indent: int = -1,
         show: bool = True,
         pos: Position = [],
@@ -36,7 +37,7 @@ class Item(DOMNode):
         super().__init__()
         self._app = None
         self._config = {
-            'tag': tag,
+            'tag': field(tag, 0, nullable=False),
             'label': label,
             'user_data': user_data,
             'use_internal_label': use_internal_label,

@@ -8,8 +8,7 @@ from rich.console import Console
 class MyApp(App):
     def compose(self):
         with Window(label='Title'):
-            with Text('test'):
-                pass
+            yield Text('test')
 
 # ! Variables
 

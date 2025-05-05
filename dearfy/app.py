@@ -1,6 +1,8 @@
 import dearpygui.dearpygui as dpg
 from dearfy.base import Item, DOMNode
-from dearfy.typing import Color
+from dearfy.typing import Color, FilePath
+from dearfy.field import field
+from dearfy.functions import formatting_kwargs
 
 from rich.console import Console
 
@@ -14,8 +16,8 @@ class App(DOMNode[Item]):
     def __init__(
         self,
         title: str = 'Dearfy Viewport',
-        small_icon: str = '',
-        large_icon: str = '',
+        small_icon: FilePath | None = None,
+        large_icon: FilePath | None = None,
         width: int = 1280,
         height: int = 800,
         x_pos: int = 100,
@@ -37,8 +39,8 @@ class App(DOMNode[Item]):
         self._gkwagrs = {
             'create_viewport': {
                 'title': title,
-                'small_icon': small_icon,
-                'large_icon': large_icon,
+                'small_icon': field(small_icon, '', nullable=False),
+                'large_icon': field(large_icon, '', nullable=False),
                 'width': width,
                 'height': height,
                 'x_pos': x_pos,
@@ -61,6 +63,12 @@ class App(DOMNode[Item]):
         }
         self.__dearfy_compose__()
         self._nodes.clear()
+    
+    def __str__(self) -> str:
+        kwargs = {}
+        for item_kwargs in self._gkwagrs.values():
+            kwargs.update(item_kwargs)
+        return f'{self.__class__.__name__}({formatting_kwargs(**kwargs)})'
 
     def __dearfy_compose__(self) -> None:
         self._nodes.append(self)
@@ -74,14 +82,16 @@ class App(DOMNode[Item]):
             child.__dearfy_preparing__(self)
 
     def __dearfy_preinit__(self) -> None:
-        pass
+        for child in self._node_children:
+            child.__dearfy_preinit__()
     
     def __dearfy_init__(self) -> None:
         for child in self._node_children:
             child.__dearfy_init__()
     
     def __dearfy_postinit__(self) -> None:
-        pass
+        for child in self._node_children:
+            child.__dearfy_postinit__()
 
     def run(self) -> None:
         self.__dearfy_preinit__()

@@ -15,6 +15,14 @@ class Container(Item):
         for child in self._node_children:
             child.__dearfy_preparing__(app)
     
+    def __dearfy_preinit__(self) -> None:
+        for child in self._node_children:
+            child.__dearfy_preinit__()
+    
     def __dearfy_init__(self) -> None:
         for child in self._node_children:
             child.__dearfy_init__()
+    
+    def __dearfy_postinit__(self) -> None:
+        for child in self._node_children:
+            child.__dearfy_postinit__()

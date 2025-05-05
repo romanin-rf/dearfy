@@ -1,6 +1,6 @@
 import inspect
 import dearpygui.dearpygui as dpg
-from typing_extensions import Any, Literal, Iterable, Callable, TypeVar
+from typing_extensions import Any, Literal, Iterable, Callable, TypeVar, overload
 
 # ! Types
 

@@ -1,4 +1,10 @@
+from os import PathLike
+from pathlib import Path, PosixPath, WindowsPath, PurePath, PurePosixPath, PureWindowsPath
 from typing_extensions import Iterable, TypeAlias
+
+# ! Typing
+
+FilePath: TypeAlias     = str | PathLike[str] | Path | PosixPath | WindowsPath | PurePath | PurePosixPath | PureWindowsPath
 
 # ! DearPyGUI Typing
 
