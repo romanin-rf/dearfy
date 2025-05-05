@@ -1,7 +1,10 @@
 import dearpygui.dearpygui as dpg
-from dearfy.typing import Color, Callback
+# > Dearfy
+from dearfy.field import field
+from dearfy.typing import Tag, Callback
 from dearfy.base import Item, ItemKwargs
 from dearfy.functions import get_method_needed
+# > Local Imports
 from typing_extensions import Unpack
 
 # ! Button Class
@@ -12,8 +15,8 @@ class Button(Item):
         *,
         width: int = 0,
         height: int = 0,
-        parent: int | str = 0,
-        before: int | str = 0,
+        parent: Tag | None = None,
+        before: Tag | None = None,
         payload_type: str = '$$DPG_PAYLOAD',
         callback: Callback | None = None,
         drag_callback: Callback | None = None,
@@ -31,8 +34,8 @@ class Button(Item):
         super().__init__(
             width=width,
             height=height,
-            parent=parent,
-            before=before,
+            parent=field(parent, 0, nullable=False),
+            before=field(before, 0, nullable=False),
             payload_type=payload_type,
             callback=callback,
             drag_callback=drag_callback,

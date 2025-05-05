@@ -20,7 +20,7 @@ class ItemKwargs(TypedDict):
 # ! Base Widget Class
 
 class Item(DOMNode):
-    __node_containerable__ = False
+    _node_containerable = False
     
     def __init__(
         self,
