@@ -9,7 +9,7 @@ class Container(Item):
 
     __node_containerable__ = True
 
-    def __init__(self, **kwargs: Unpack[ItemKwargs] | object) -> None: # type: ignore
+    def __init__(self, **kwargs: Unpack[ItemKwargs]) -> None:
         super().__init__(**kwargs)
     
     def __dearfy_preparing__(self, app: object) -> None:
