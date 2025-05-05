@@ -3,6 +3,7 @@ from dearfy.base import Item, DOMNode
 from dearfy.typing import Color, FilePath
 from dearfy.field import field
 from dearfy.functions import formatting_kwargs
+from typing_extensions import TypeAlias, Iterator
 
 from rich.console import Console
 
@@ -10,9 +11,15 @@ from rich.console import Console
 
 console = Console()
 
+# ! Types
+
+ComposeResult: TypeAlias = Iterator[Item]
+
 # ! App Base Class
 
-class App(DOMNode[Item]):
+class App(DOMNode):
+    _node_children: list[Item]
+
     def __init__(
         self,
         title: str = 'Dearfy Viewport',

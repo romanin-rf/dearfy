@@ -5,6 +5,8 @@ from typing_extensions import Unpack
 # ! Container Base Class
 
 class Container(Item):
+    _node_children: list[Item]
+
     __node_containerable__ = True
 
     def __init__(self, **kwargs: Unpack[ItemKwargs] | object) -> None: # type: ignore

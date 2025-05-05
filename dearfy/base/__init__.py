@@ -3,5 +3,5 @@ from dearfy.base.domnode import DOMNode
 from dearfy.base.conrainer import Container
 
 __all__ = [
-    'DOMNode', 'Item', 'Container'
+    'DOMNode', 'Item', 'ItemKwargs', 'Container'
 ]

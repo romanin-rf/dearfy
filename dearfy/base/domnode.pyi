@@ -1,7 +1,7 @@
 from collections import deque
 from types import TracebackType
 from rich.tree import Tree
-from typing_extensions import Iterator, Self, Generic, TypeVar, ClassVar
+from typing_extensions import Iterator, Self, TypeVar, ClassVar
 
 # ! Type Vars
 
@@ -9,13 +9,13 @@ T = TypeVar('T')
 
 # ! DOM Node Class
 
-class DOMNode(Generic[T]):
+class DOMNode:
     __node_containerable__: ClassVar[bool]
 
-    _nodes: ClassVar[deque[DOMNode[T] | T]]
+    _nodes: ClassVar[deque[DOMNode]]
 
-    _node_parent: DOMNode[T] | T | None
-    _node_children: list[DOMNode[T] | T]
+    _node_parent: DOMNode | None
+    _node_children: list[DOMNode]
 
     def __init__(self) -> None: ...
     
@@ -29,13 +29,12 @@ class DOMNode(Generic[T]):
     def node_uuid(self) -> str: ...
     
     @property
-    def _current_node(self) -> 'DOMNode[T]' | T | None: ...
+    def _current_node(self) -> DOMNode | None: ...
     
-    def _add_child(self, __child: 'DOMNode[T]' | T, /) -> None: ...
+    def _add_child(self, __child: DOMNode, /) -> None: ...
     
     def _to_rich_tree(self) -> Tree: ...
     
-    def _build_rich_tree_recursive(self, node: 'DOMNode[T]' | T, parent_tree: Tree) -> None: ...
+    def _build_rich_tree_recursive(self, node: DOMNode, parent_tree: Tree) -> None: ...
     
-    def compose(self) -> Iterator['DOMNode[T]' | T]:
-        yield from ()
+    def compose(self) -> Iterator[DOMNode]: ...

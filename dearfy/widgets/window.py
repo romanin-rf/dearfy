@@ -1,8 +1,8 @@
 import dearpygui.dearpygui as dpg
 from dearfy.functions import get_method_needed
 from dearfy.base import Container, ItemKwargs
-from dearfy.typing import Size
-from typing_extensions import Any, Callable, Unpack
+from dearfy.typing import Size, Callback
+from typing_extensions import Unpack
 
 # ! Window Class
 
@@ -34,7 +34,7 @@ class Window(Container):
         no_saved_settings: bool = False,
         no_open_over_existing_popup: bool = True,
         no_scroll_with_mouse: bool = False,
-        on_close: Callable[..., Any] | None = None,
+        on_close: Callback | None = None,
         **kwargs: Unpack[ItemKwargs]
     ) -> None:
         super().__init__(

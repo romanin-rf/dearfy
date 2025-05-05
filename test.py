@@ -1,14 +1,15 @@
 from dearfy.app import App
-from dearfy.widgets.text import Text
-from dearfy.widgets.window import Window
+from dearfy.widgets import *
 from rich.console import Console
 
-# ! Types
+# ! App
 
 class MyApp(App):
     def compose(self):
         with Window(label='Title'):
-            yield Text('test')
+            with Group(horizontal=True):
+                yield Text('Click for SURPRISE: ')
+                yield Button(label='*click*')
 
 # ! Variables
 

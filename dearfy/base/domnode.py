@@ -1,22 +1,18 @@
 from rich.tree import Tree
 from collections import deque
 from types import TracebackType
-from typing_extensions import Iterator, Self, Generic, TypeVar
-
-# ! Type Vars
-
-T = TypeVar('T')
+from typing_extensions import Iterator, Self
 
 # ! DOM Node Class
 
-class DOMNode(Generic[T]):
+class DOMNode:
     __node_containerable__: bool = True
 
-    _nodes: deque['DOMNode[T]' | T] = deque()
+    _nodes: deque['DOMNode'] = deque()
 
     def __init__(self) -> None:
-        self._node_children: list[DOMNode[T] | T] = []
-        self._node_parent: DOMNode[T] | T | None = None
+        self._node_children: list[DOMNode] = []
+        self._node_parent: DOMNode | None = None
     
     def __str__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -44,10 +40,10 @@ class DOMNode(Generic[T]):
             self._nodes.pop()
     
     @property
-    def _current_node(self) -> 'DOMNode[T]' | T | None:
+    def _current_node(self):
         return self._nodes[-1] if self._nodes else None
     
-    def _add_child(self, __child: 'DOMNode[T]' | T, /) -> None:
+    def _add_child(self, __child: 'DOMNode', /) -> None:
         if not self.__node_containerable__:
             raise NotImplementedError('This object type is not a container.')
         __child._node_parent = self
@@ -58,10 +54,10 @@ class DOMNode(Generic[T]):
         self._build_rich_tree_recursive(self, tree)
         return tree
     
-    def _build_rich_tree_recursive(self, node: 'DOMNode[T]' | T, parent_tree: Tree) -> None:
+    def _build_rich_tree_recursive(self, node: 'DOMNode', parent_tree: Tree) -> None:
         for child in node._node_children:
             branch = parent_tree.add(repr(child))
             self._build_rich_tree_recursive(child, branch)
     
-    def compose(self) -> Iterator['DOMNode[T]' | T]:
+    def compose(self) -> Iterator['DOMNode']:
         yield from ()

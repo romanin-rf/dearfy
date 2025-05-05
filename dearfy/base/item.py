@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg
-from typing_extensions import Any, TypedDict
+from typing_extensions import Any, NotRequired, TypedDict
 # > Local Imports
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag, Position
@@ -9,13 +9,13 @@ from dearfy.functions import formatting_kwargs
 # ! Typing
 
 class ItemKwargs(TypedDict):
-    label: str
-    user_data: Any | None
-    use_internal_label: bool
-    tag: Tag | None
-    indent: int
-    show: bool
-    pos: Position
+    label: NotRequired[str]
+    user_data: NotRequired[Any | None]
+    use_internal_label: NotRequired[bool]
+    tag: NotRequired[Tag | None]
+    indent: NotRequired[int]
+    show: NotRequired[bool]
+    pos: NotRequired[Position]
 
 # ! Base Widget Class
 
@@ -25,7 +25,7 @@ class Item(DOMNode):
     def __init__(
         self,
         *,
-        label: str='',
+        label: str = '',
         user_data: Any | None = None,
         use_internal_label: bool = True,
         tag: Tag | None = None,

@@ -1,4 +1,5 @@
-from typing_extensions import Any, TypedDict, ClassVar
+from collections import deque
+from typing_extensions import Any, TypedDict, NotRequired, ClassVar
 # > Local Imports
 from dearfy.app import App
 from dearfy.base.domnode import DOMNode
@@ -7,18 +8,22 @@ from dearfy.typing import Tag, Position
 # ! Typing
 
 class ItemKwargs(TypedDict):
-    label: str
-    user_data: Any | None
-    use_internal_label: bool
-    tag: Tag | None
-    indent: int
-    show: bool
-    pos: Position
+    label: NotRequired[str]
+    user_data: NotRequired[Any | None]
+    use_internal_label: NotRequired[bool]
+    tag: NotRequired[Tag | None]
+    indent: NotRequired[int]
+    show: NotRequired[bool]
+    pos: NotRequired[Position]
 
 # ! Base Widget Class
 
 class Item(DOMNode):
-    _app: ClassVar[App | None]
+    _nodes: ClassVar[deque[App | Item | DOMNode]]
+    _node_parent: App | Item | DOMNode
+    _node_children: list
+    
+    _app: App | None
     _config: dict[str | Any]
 
     def __init__(
