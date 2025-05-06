@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 from dearfy.base import Item, DOMNode
 from dearfy.typing import Color, FilePath
 from dearfy.field import field
+from dearfy.action import Actioner
 from dearfy.functions import formatting_kwargs
 from typing_extensions import TypeAlias, Iterator
 
@@ -19,6 +20,7 @@ ComposeResult: TypeAlias = Iterator[Item]
 
 class App(DOMNode):
     _node_children: list[Item]
+    _actioner: Actioner = Actioner()
 
     def __init__(
         self,
@@ -112,3 +114,5 @@ class App(DOMNode):
         console.print(self._to_rich_tree())
         dpg.start_dearpygui()
         dpg.destroy_context()
+
+action = App._actioner.action
