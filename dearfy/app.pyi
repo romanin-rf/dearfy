@@ -1,3 +1,7 @@
+
+# > Typing
+from typing_extensions import TypeAlias, Iterable, Iterator, ClassVar
+# > Local Imports
 from dearfy.base import Item, DOMNode
 from dearfy.typing import Color, FilePath
 from dearfy.action import (
@@ -6,7 +10,6 @@ from dearfy.action import (
     ActionCallMode, ActionCallModeLiteral,
     ActionName, ActionGroup
 )
-from typing_extensions import TypeAlias, Iterable, Iterator, ClassVar
 
 # ! Types
 
@@ -15,8 +18,9 @@ ComposeResult: TypeAlias = Iterator[Item]
 # ! App Base Class
 
 class App(DOMNode):
-    _node_children: list[Item]
     _actioner: ClassVar[Actioner]
+
+    _node_children: list[Item]
 
     def __init__(
         self,

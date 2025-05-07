@@ -5,8 +5,9 @@ from typing_extensions import Unpack
 # ! Container Base Class
 
 class Container(Item):
+    NODE_CONTAINERABLE = True
+
     _node_children: list[Item]
-    _node_containerable = True
 
     def __init__(self, **kwargs: Unpack[ItemKwargs]) -> None:
         super().__init__(**kwargs)

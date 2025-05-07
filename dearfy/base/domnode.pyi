@@ -10,7 +10,9 @@ T = TypeVar('T')
 # ! DOM Node Class
 
 class DOMNode:
-    _node_containerable: ClassVar[bool]
+    NODE_CONTAINERABLE: ClassVar[bool]
+    """Is the node a container."""
+    
     _nodes: ClassVar[deque[DOMNode]]
     _node_parent: DOMNode | None
     _node_children: list[DOMNode]

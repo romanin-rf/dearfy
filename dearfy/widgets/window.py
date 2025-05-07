@@ -3,10 +3,13 @@ from dearfy.functions import get_method_needed
 from dearfy.base import Container, ItemKwargs
 from dearfy.typing import Size, Callback
 from typing_extensions import Unpack
+from dearfy.validator import ValidateKwargsAction
 
 # ! Window Class
 
 class Window(Container):
+    VALIDATORS_KWARGS = (ValidateKwargsAction, )
+    
     def __init__(
         self,
         *,

@@ -1,10 +1,12 @@
 import dearpygui.dearpygui as dpg
+# > Typing
+from typing_extensions import TypeAlias, Iterator
+# > Local Imports
 from dearfy.base import Item, DOMNode
 from dearfy.typing import Color, FilePath
 from dearfy.field import field
 from dearfy.action import Actioner
 from dearfy.functions import formatting_kwargs
-from typing_extensions import TypeAlias, Iterator
 
 from rich.console import Console
 
@@ -103,10 +105,10 @@ class App(DOMNode):
             child.__dearfy_postinit__()
 
     def run(self) -> None:
-        self.__dearfy_preinit__()
+        self.__dearfy_preparing__()
         dpg.create_context()
         dpg.create_viewport(**(self._gkwagrs['create_viewport']))
-        self.__dearfy_preparing__()
+        self.__dearfy_preinit__()
         self.__dearfy_init__()
         self.__dearfy_postinit__()
         dpg.setup_dearpygui()

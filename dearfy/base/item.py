@@ -1,10 +1,11 @@
 import dearpygui.dearpygui as dpg
-from typing_extensions import Any, NotRequired, TypedDict
+from typing_extensions import Any, TypedDict, Callable, ParamSpecKwargs, NotRequired
 # > Local Imports
+from dearfy.field import field
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag, Position
-from dearfy.field import field
 from dearfy.functions import formatting_kwargs
+from dearfy.validator import ValidatorKwargsBase
 
 # ! Typing
 
@@ -20,7 +21,9 @@ class ItemKwargs(TypedDict):
 # ! Base Widget Class
 
 class Item(DOMNode):
-    _node_containerable = False
+    NODE_CONTAINERABLE = False
+    
+    VALIDATORS_KWARGS: tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs[object]], Any], ...] = ()
     
     def __init__(
         self,
@@ -66,7 +69,11 @@ class Item(DOMNode):
         self._app = app
     
     def __dearfy_preinit__(self) -> None:
-        pass
+        for vkt in self.VALIDATORS_KWARGS:
+            if issubclass(vkt, ValidatorKwargsBase):
+                self._config = vkt(item=self, app=self._app).validate(**self._config)
+            elif callable(vkt):
+                self._config = vkt(self, **self._config)
     
     def __dearfy_init__(self) -> None:
         pass

@@ -1,9 +1,10 @@
 from collections import deque
-from typing_extensions import Any, TypedDict, NotRequired, ClassVar
+from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs, ClassVar
 # > Local Imports
 from dearfy.app import App
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag, Position
+from dearfy.validator import ValidatorKwargsBase
 
 # ! Typing
 
@@ -19,12 +20,14 @@ class ItemKwargs(TypedDict):
 # ! Base Widget Class
 
 class Item(DOMNode):
+    VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs[object]], Any], ...]]
+
     _nodes: ClassVar[deque[App | Item | DOMNode]]
+
     _node_parent: App | Item | DOMNode
     _node_children: list
-    
     _app: App | None
-    _config: dict[str | Any]
+    _config: dict[str, Any]
 
     def __init__(
         self,
@@ -32,7 +35,7 @@ class Item(DOMNode):
         label: str='',
         user_data: Any | None = None,
         use_internal_label: bool = True,
-        tag: Tag = 0,
+        tag: Tag | None = None,
         indent: int = -1,
         show: bool = True,
         pos: Position = [],

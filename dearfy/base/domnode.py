@@ -6,7 +6,8 @@ from typing_extensions import Iterator, Self
 # ! DOM Node Class
 
 class DOMNode:
-    _node_containerable: bool = True
+    NODE_CONTAINERABLE: bool = True
+
     _nodes: deque['DOMNode'] = deque()
 
     def __init__(self) -> None:
@@ -20,7 +21,7 @@ class DOMNode:
         return self.__str__()
     
     def __enter__(self) -> Self:
-        if not self._node_containerable:
+        if not self.NODE_CONTAINERABLE:
             raise NotImplementedError('This object type is not a container.')
         if self._nodes:
             self._nodes[-1]._add_child(self)
@@ -33,7 +34,7 @@ class DOMNode:
         exc_val: BaseException | None,
         exc_tb: TracebackType | None
     ) -> None:
-        if not self._node_containerable:
+        if not self.NODE_CONTAINERABLE:
             raise NotImplementedError('This object type is not a container.')
         if self._nodes:
             self._nodes.pop()
@@ -43,7 +44,7 @@ class DOMNode:
         return self._nodes[-1] if self._nodes else None
     
     def _add_child(self, __child: 'DOMNode', /) -> None:
-        if not self._node_containerable:
+        if not self.NODE_CONTAINERABLE:
             raise NotImplementedError('This object type is not a container.')
         __child._node_parent = self
         self._node_children.append(__child)

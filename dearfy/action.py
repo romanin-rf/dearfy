@@ -227,7 +227,7 @@ class Action:
 class Actioner:
     def __init__(self) -> None:
         self.__set_block_semaphore = threading.Semaphore(1)
-        self.actions: dict[tuple[str, str], Action] = {}
+        self.actions: dict[tuple[ActionName, ActionGroup], Action] = {}
         self.blocks: list[
             tuple[ActionBlockMode, tuple[ActionName, ActionGroup], list[ActionName | tuple[ActionName, ActionGroup]]]
         ] = []
@@ -254,6 +254,15 @@ class Actioner:
             for index_needed_remove in indexs_needed_remove:
                 self.blocks.pop(index_needed_remove)
         self.__set_block_semaphore.release()
+    
+    def get(self, key: ActionIndeficator | ActionName, default: T=None) -> Action | T:
+        if isinstance(key, str):
+            for action_indeficator in self.actions.copy().keys():
+                if action_indeficator[0] == key:
+                    return self.actions[action_indeficator]
+        elif isinstance(key, tuple):
+            return self.actions[key]
+        return default
     
     def action(
         self,

@@ -4,12 +4,15 @@ from dearfy.field import field
 from dearfy.typing import Tag, Color, Callback
 from dearfy.base import Item, ItemKwargs
 from dearfy.functions import get_method_needed
+from dearfy.validator import ValidateKwargsAction
 # > Local Imports
 from typing_extensions import Unpack
 
 # ! Text Class
 
 class Text(Item):
+    VALIDATORS_KWARGS = (ValidateKwargsAction, )
+
     def __init__(self,
         default_value: str='',
         *,
