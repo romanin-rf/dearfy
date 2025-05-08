@@ -1,3 +1,4 @@
+import ctypes
 import inspect
 import dearpygui.dearpygui as dpg
 # > Typing
@@ -66,6 +67,11 @@ def match_item_position(
         else:
             raise RuntimeError(f'There is no object with this tag/id: {item!r}')
     return
+
+# ! Low-level Methods
+
+def get_object_by_address(__object_address: int) -> Any:
+    return ctypes.cast(__object_address, ctypes.py_object).value
 
 """Calculates the position of an object relative to the size of the viewport
 

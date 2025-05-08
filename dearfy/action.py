@@ -1,7 +1,7 @@
+import loguru
 import inspect
 import datetime
 import threading
-from collections import deque
 from enum import Enum, Flag, auto
 # > Typing
 from typing_extensions import (
@@ -148,6 +148,17 @@ class Action:
         return False
     
     @property
+    def enabled(self) -> bool:
+        return ActionState.ENABLED in self.state
+    
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        if value:
+            self.state |= ActionState.ENABLED
+        else:
+            self.state &= ~ActionState.ENABLED
+    
+    @property
     def threaded(self) -> bool:
         return self.__threaded
     
@@ -173,7 +184,7 @@ class Action:
             result = self.method(*_match_call_args(self.method, sender, app_data, user_data))
         except:
             result = None
-            #loguru.logger.exception('An error has occurred in action!')
+            loguru.logger.exception('An error has occurred in action!')
         self.actions.set_block(False, self.indeficator, self.blockmode, self.blocks)
         self.state &= ~ActionState.RUNNING
         return result
@@ -190,8 +201,7 @@ class Action:
         try:
             self.method(*_match_call_args(self.method, sender, app_data, user_data))
         except:
-            #loguru.logger.exception('An error has occurred in action!')
-            pass
+            loguru.logger.exception('An error has occurred in action!')
         self.actions.set_block(False, self.indeficator, self.blockmode, self.blocks)
         self.state &= ~ActionState.RUNNING
 
@@ -201,14 +211,11 @@ class Action:
         app_data: dict[str, Any] | str | None,
         user_data: Any | None=None
     ) -> Any | None:
-        #loguru.logger.debug(f"Calling action <{self.__indeficator}> with parameters:")
-        #loguru.logger.debug(f"    > {sender=!r}")
-        #loguru.logger.debug(f"    > {app_data=!r}")
-        #loguru.logger.debug(f"    > {user_data=!r}")
-        if ActionState.ENABLED not in self.state:
+        loguru.logger.trace(f"[red]Call[/red]: {self!r}.__call__({sender!r}, {app_data!r}, {user_data!r})")
+        if not self.enabled:
             return
         if not self.__threaded:
-            #loguru.logger.debug(f"[green]Starting[/green] action <{self.__indeficator}> in [gray bold]simple mode[/gray bold].")
+            loguru.logger.trace(f"[green]Starting[/green] action <{self.__indeficator}> in [gray bold]simple mode[/gray bold].")
             return self.__call_main__(sender, app_data, user_data)
         else:
             if not self.can_call():
@@ -216,10 +223,10 @@ class Action:
             if self.__thread is not None:
                 if self.__thread.is_alive():
                     return
-            #loguru.logger.debug(f"[green]Starting[/green] action <{self.__indeficator}> in [gray bold]thread mode[/gray bold].")
+            loguru.logger.trace(f"[green]Starting[/green] action <{self.__indeficator}> in [gray bold]thread mode[/gray bold].")
             self.__thread = threading.Thread(target=self.__call_thread__, args=(sender, app_data, user_data))
             self.__thread.start()
-            #loguru.logger.debug(f"[yellow]Started[/yellow] action <{self.__indeficator}> in [gray bold]thread mode[/gray bold].")
+            loguru.logger.trace(f"[yellow]Stopped[/yellow] action <{self.__indeficator}> in [gray bold]thread mode[/gray bold].")
             return
 
 # ! Actioner Class
@@ -278,3 +285,18 @@ class Actioner:
             self.actions[action.indeficator] = action
             return action
         return wrapper
+    
+    def add_action(
+        self,
+        method: ActionMethod,
+        name: str,
+        group: str='main',
+        callmode: ActionCallModeLiteral | ActionCallMode = ActionCallMode.MANY,
+        blockmode: ActionBlockModeLiteral | ActionBlockMode = ActionBlockMode.NONE,
+        blocks: Iterable[ActionName | tuple[ActionName, ActionGroup]]=[],
+        threaded: bool=False,
+    ) -> None:
+        action = Action(self, name, method, group, callmode, blockmode, blocks, threaded)
+        if action.indeficator in self.actions:
+            self.actions[action.indeficator].enabled = False
+        self.actions[action.indeficator] = action

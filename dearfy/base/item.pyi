@@ -20,7 +20,7 @@ class ItemKwargs(TypedDict):
 # ! Base Widget Class
 
 class Item(DOMNode):
-    VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs[object]], Any], ...]]
+    VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], Any], ...]]
 
     _nodes: ClassVar[deque[App | Item | DOMNode]]
 

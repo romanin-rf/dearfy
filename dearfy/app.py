@@ -1,3 +1,4 @@
+import loguru
 import dearpygui.dearpygui as dpg
 # > Typing
 from typing_extensions import TypeAlias, Iterator
@@ -5,14 +6,8 @@ from typing_extensions import TypeAlias, Iterator
 from dearfy.base import Item, DOMNode
 from dearfy.typing import Color, FilePath
 from dearfy.field import field
-from dearfy.action import Actioner
+from dearfy.action import Actioner, Action
 from dearfy.functions import formatting_kwargs
-
-from rich.console import Console
-
-# ! Variables
-
-console = Console()
 
 # ! Types
 
@@ -73,6 +68,7 @@ class App(DOMNode):
             }
         }
         self.__dearfy_compose__()
+        self.__dearfy_handlering_attributes__()
         self._nodes.clear()
     
     def __str__(self) -> str:
@@ -80,7 +76,16 @@ class App(DOMNode):
         for item_kwargs in self._gkwagrs.values():
             kwargs.update(item_kwargs)
         return f'{self.__class__.__name__}({formatting_kwargs(**kwargs)})'
-
+    
+    def __dearfy_handlering_attributes__(self) -> None:
+        for attr_name in dir(self):
+            if attr_name.startswith('action_'):
+                attr = getattr(self, attr_name)
+                if isinstance(attr, Action):
+                    continue
+                elif callable(attr):
+                    self._actioner.add_action(attr, attr_name[7:])
+    
     def __dearfy_compose__(self) -> None:
         self._nodes.append(self)
         for child in self.compose():
@@ -113,7 +118,7 @@ class App(DOMNode):
         self.__dearfy_postinit__()
         dpg.setup_dearpygui()
         dpg.show_viewport(**(self._gkwagrs['show_viewport']))
-        console.print(self._to_rich_tree())
+        loguru.logger.trace(self._to_rich_tree())
         dpg.start_dearpygui()
         dpg.destroy_context()
 

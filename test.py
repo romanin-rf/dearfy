@@ -1,4 +1,4 @@
-from dearfy.app import App, action
+from dearfy.app import App
 from dearfy.widgets import *
 from rich.console import Console
 
@@ -9,11 +9,10 @@ class MyApp(App):
         with Window(label='Title'):
             with Group(horizontal=True):
                 yield Text('Click for SURPRISE: ')
-                yield Button(label='*click*', callback=self.action_method_testing)
+                yield Button(label='*click*', callback='test')
     
-    @action('method_testing')
-    def action_method_testing(sender: str | int):
-        console.print(f'call -> action_method_testing({sender!r})')
+    def action_test(self, sender: str | int):
+        pass
 
 # ! Variables
 

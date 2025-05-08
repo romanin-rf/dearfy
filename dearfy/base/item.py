@@ -23,7 +23,7 @@ class ItemKwargs(TypedDict):
 class Item(DOMNode):
     NODE_CONTAINERABLE = False
     
-    VALIDATORS_KWARGS: tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs[object]], Any], ...] = ()
+    VALIDATORS_KWARGS: tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], Any], ...] = ()
     
     def __init__(
         self,
@@ -51,7 +51,7 @@ class Item(DOMNode):
         }
     
     def __str__(self) -> str:
-        return f'{self.__class__.__name__}({formatting_kwargs(**self._config)})'
+        return f'{self.__class__.__name__}({formatting_kwargs(**self._config)})' # f'{self.__class__.__name__}(...)'
     
     @property
     def tag(self) -> Tag:

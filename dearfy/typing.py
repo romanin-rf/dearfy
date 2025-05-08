@@ -13,4 +13,9 @@ Position: TypeAlias     = tuple[int, int] | Iterable[int]
 Size: TypeAlias         = tuple[int, int] | Iterable[int]
 Color: TypeAlias        = tuple[int, int, int, int] | Iterable[int]
 
-Callback = Callable[[str, Any | None], Any] | Callable[[str, Any | None, Any | None], Any]
+Callback: TypeAlias     = \
+    Callable[[str], Any] | \
+    Callable[[str], Any] | \
+    Callable[[str, Any | None], Any] | \
+    Callable[[str, Any | None, Any | None], Any] | \
+    str | tuple[str, str]
