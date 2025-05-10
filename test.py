@@ -6,13 +6,14 @@ from rich.console import Console
 
 class MyApp(App):
     def compose(self):
+        self.button = Button(label='*click*', callback='test')
         with Window(label='Title'):
             with Group(horizontal=True):
                 yield Text('Click for SURPRISE: ')
-                yield Button(label='*click*', callback='test')
+                yield self.button
     
     def action_test(self, sender: str | int):
-        pass
+        self.button.destroy()
 
 # ! Variables
 

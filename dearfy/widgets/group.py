@@ -2,7 +2,7 @@ import dearpygui.dearpygui as dpg
 # > Dearfy
 from dearfy.field import field
 from dearfy.typing import Tag, Callback
-from dearfy.base import Container, ItemKwargs
+from dearfy.base import Container, ItemKwargs, Enablable
 from dearfy.functions import get_method_needed
 from dearfy.validator import ValidateKwargsAction
 # > Local Imports
@@ -10,7 +10,8 @@ from typing_extensions import Unpack
 
 # ! Group Class
 
-class Group(Container):
+class Group(Container, Enablable):
+    REFERENCE_METHOD = dpg.add_group
     VALIDATORS_KWARGS = (ValidateKwargsAction, )
 
     def __init__(

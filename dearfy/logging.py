@@ -79,63 +79,47 @@ class LoguruRichHandler(RichHandler):
         )
         return Text('[') + level_text + Text(']')
 
-REGEX_SEARCH_ADDR_OBJECT        = r'<{}.* object at (?P<id>0x[\da-zA-Z]*)>'
-REGEX_SEARCH_ADDR_OBJECT_RICH   = re.compile(REGEX_SEARCH_ADDR_OBJECT.format('rich'))
+# ! Richer Class
 
-def render_rich_objects(*objs: RenderableType) -> Iterator[str]:
-    if not objs:
+class Richer:
+    REGEX_SEARCH_ADDR_OBJECT = r'<{}.* object at (?P<addr>0x[\da-zA-Z]*)>'
+
+    def __init__(self) -> None:
+        self.__console = Console(record=True, markup=False, emoji=True, highlighter=None)
+        self.__regex_cache = {}
+    
+    def render_rich_objects(self, objs: Iterable[RenderableType]) -> Iterator[str]:
         yield from ()
-        return
-    console = Console(record=True, markup=False, emoji=True, highlighter=None)
-    for obj in objs:
+        for obj in objs:
+            with StringIO() as sio:
+                self.__console.file = sio
+                self.__console.print(obj, sep='', end='')
+                yield sio.getvalue()
+    
+    def render_rich_object(self, obj: RenderableType) -> str:
         with StringIO() as sio:
-            console.file = sio
-            console.print(obj)
-            yield sio.getvalue()
-
-def replace_addr_objects(message: str, module_import_name: str='') -> str:
-    pattern = re.compile(REGEX_SEARCH_ADDR_OBJECT.format(module_import_name))
-    matches = list(pattern.finditer(message))
-    if not matches:
-        return
-
-def replace_rich_ids_objects(message: str, module_import_name: str=r'') -> str:
-    pattern = re.compile(REGEX_SEARCH_ADDR_OBJECT.format(module_import_name))
-    matches = list(pattern.finditer(message))
-    if not matches:
-        return message
-    addresses = []
-    for match in matches:
-        if (addr := match.group('id')) is not None:
+            self.__console.file = sio
+            self.__console.print(obj, sep='', end='')
+            return sio.getvalue()
+    
+    def replace_addr_objects(self, message: str, module_import_name: str = r'') -> str:
+        if module_import_name not in self.__regex_cache:
+            pattern = self.__regex_cache[module_import_name] = re.compile(self.REGEX_SEARCH_ADDR_OBJECT.format(module_import_name))
+        else:
+            pattern = self.__regex_cache[module_import_name]
+        for result in pattern.finditer(message):
             try:
-                addresses.append(int(addr, 16))
-            except ValueError:
-                continue
-    if not addresses:
+                rendered = self.render_rich_object(get_object_by_address(int(result.group('addr'), 16)))
+                message = message[:result.start()] + rendered + message[result.end():]
+            except:
+                pass
         return message
-    objects = []
-    for addr in addresses:
-        try:
-            obj = get_object_by_address(addr)
-            if () is not None:
-                objects.append(obj)
-        except (ctypes.ArgumentError, ValueError):
-            continue
-    if not objects:
-        return message
-    rendered_objs = list(render_rich_objects(*objects))
-    if rendered_objs:
-        parts, last_pos = [], 0
-        for i, match in enumerate(matches):
-            parts.append(message[last_pos:match.start()])
-            if len(rendered_objs) > i:
-                parts.append(rendered_objs[i])
-            else:
-                match.group(0)
-            last_pos = match.end()
-        parts.append(message[last_pos:])
-        return ''.join(parts)
-    return message
+
+# ! Variables
+
+richer = Richer()
+
+# ! Spetific Methods
 
 def spetific_format_log(record: LogRecord) -> str:
-    return replace_rich_ids_objects(record['message'])
+    return richer.replace_addr_objects(record['message'], 'rich')

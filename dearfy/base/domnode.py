@@ -49,6 +49,11 @@ class DOMNode:
         __child._node_parent = self
         self._node_children.append(__child)
     
+    def _remove_child(self, __child: 'DOMNode', /) -> None:
+        if __child in self._node_children:
+            __child._node_parent = None
+            self._node_children.remove(__child)
+    
     def _to_rich_tree(self) -> Tree:
         tree = Tree(repr(self), highlight=True)
         self._build_rich_tree_recursive(self, tree)

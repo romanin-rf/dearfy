@@ -16,11 +16,14 @@ def formatting_kwargs(**kwargs: object) -> str:
 # ! Object Works
 
 def get_method_needed(method: Callable[..., Any], **kwargs: T) -> dict[str, T]:
-    params = {}
-    for name, param in inspect.signature(method).parameters.items():
-        if param.default is not param.empty:
-            params[name] = param.default
-    new_kwargs, needed = {}, method.__code__.co_varnames
+    if inspect.ismethod(method):
+        func = method.__func__
+    else:
+        func = method
+    params, sig = {}, inspect.signature(func)
+    for name, param in sig.parameters.items():
+        params[name] = param.default if (param.default is not param.empty) else NotImplemented
+    new_kwargs, needed = {}, func.__code__.co_varnames
     for key, value in kwargs.items():
         if (key in needed) and (params.get(key, NotImplemented) != value):
             new_kwargs[key] = value

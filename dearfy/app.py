@@ -1,4 +1,5 @@
 import loguru
+from enum import Enum
 import dearpygui.dearpygui as dpg
 # > Typing
 from typing_extensions import TypeAlias, Iterator
@@ -7,11 +8,21 @@ from dearfy.base import Item, DOMNode
 from dearfy.typing import Color, FilePath
 from dearfy.field import field
 from dearfy.action import Actioner, Action
-from dearfy.functions import formatting_kwargs
+from dearfy.functions import formatting_kwargs, get_method_needed
 
 # ! Types
 
 ComposeResult: TypeAlias = Iterator[Item]
+
+# ! States
+
+class AppState(Enum):
+    NONE = 0
+    PREPARING = 1
+    PREINIT = 2
+    INIT = 3
+    POSTINIT = 4
+    RUNNING = 5
 
 # ! App Base Class
 
@@ -42,6 +53,7 @@ class App(DOMNode):
         maximized: bool = False
     ) -> None:
         super().__init__()
+        self._state: AppState = AppState.NONE
         self._gkwagrs = {
             'create_viewport': {
                 'title': title,
@@ -68,16 +80,17 @@ class App(DOMNode):
             }
         }
         self.__dearfy_compose__()
-        self.__dearfy_handlering_attributes__()
+        self.__dearfy_init_action_attributes__()
         self._nodes.clear()
     
     def __str__(self) -> str:
         kwargs = {}
         for item_kwargs in self._gkwagrs.values():
             kwargs.update(item_kwargs)
+        kwargs = get_method_needed(self.__init__, **kwargs)
         return f'{self.__class__.__name__}({formatting_kwargs(**kwargs)})'
     
-    def __dearfy_handlering_attributes__(self) -> None:
+    def __dearfy_init_action_attributes__(self) -> None:
         for attr_name in dir(self):
             if attr_name.startswith('action_'):
                 attr = getattr(self, attr_name)
@@ -108,18 +121,30 @@ class App(DOMNode):
     def __dearfy_postinit__(self) -> None:
         for child in self._node_children:
             child.__dearfy_postinit__()
+    
+    def __dearfy_destroy__(self) -> None:
+        for child in self._node_children:
+            child.__dearfy_destroy__()
 
     def run(self) -> None:
+        self._state = AppState.PREPARING
         self.__dearfy_preparing__()
         dpg.create_context()
         dpg.create_viewport(**(self._gkwagrs['create_viewport']))
+        self._state = AppState.PREINIT
         self.__dearfy_preinit__()
+        self._state = AppState.INIT
         self.__dearfy_init__()
+        self._state = AppState.POSTINIT
         self.__dearfy_postinit__()
         dpg.setup_dearpygui()
         dpg.show_viewport(**(self._gkwagrs['show_viewport']))
+        self._state = AppState.RUNNING
         loguru.logger.trace(self._to_rich_tree())
         dpg.start_dearpygui()
         dpg.destroy_context()
+        self._state = AppState.NONE
+        self.__dearfy_destroy__()
+        loguru.logger.trace(self._to_rich_tree())
 
 action = App._actioner.action

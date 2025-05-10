@@ -11,6 +11,7 @@ from typing_extensions import Unpack
 # ! Text Class
 
 class Text(Item):
+    REFERENCE_METHOD = dpg.add_text
     VALIDATORS_KWARGS = (ValidateKwargsAction, )
 
     def __init__(self,

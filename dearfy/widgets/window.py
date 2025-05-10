@@ -8,6 +8,7 @@ from dearfy.validator import ValidateKwargsAction
 # ! Window Class
 
 class Window(Container):
+    REFERENCE_METHOD = dpg.add_window
     VALIDATORS_KWARGS = (ValidateKwargsAction, )
     
     def __init__(

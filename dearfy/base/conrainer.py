@@ -28,3 +28,8 @@ class Container(Item):
     def __dearfy_postinit__(self) -> None:
         for child in self._node_children:
             child.__dearfy_postinit__()
+    
+    def __dearfy_destroy__(self) -> None:
+        super().__dearfy_destroy__()
+        for child in self._node_children:
+            child.__dearfy_destroy__()
