@@ -113,14 +113,3 @@ class Item(DOMNode):
     def hide(self) -> None:
         if self.inited:
             dpg.hide_item(self.tag)
-
-# ! Item Advance Classes
-
-class Enablable:
-    @property
-    def enabled(self) -> bool:
-        return self._config['enabled']
-    
-    @enabled.setter
-    def enabled(self, value: bool) -> None:
-        self.configurate(enabled=value)
