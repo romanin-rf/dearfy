@@ -1,6 +1,7 @@
-from collections import deque
-from types import TracebackType
 from rich.tree import Tree
+from collections import deque
+# > Typing
+from types import TracebackType
 from typing_extensions import Iterator, Self, TypeVar, ClassVar
 
 # ! Type Vars

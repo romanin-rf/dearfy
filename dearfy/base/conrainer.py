@@ -1,6 +1,9 @@
-from dearfy.base.item import Item, ItemKwargs
-# > Local Imports
+
+# > Typing
 from typing_extensions import Unpack
+
+# > Local Imports
+from dearfy.base.item import Item, ItemKwargs
 
 # ! Container Base Class
 

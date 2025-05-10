@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# > Typing
 from typing_extensions import Any, TypeVar
 
 # ! Types
@@ -17,7 +18,7 @@ class RequireBasesMeta(type):
 
     or
 
-    >>> @require_bases(int)
+    >>> @require_bases(object)
     >>> class Object(metaclass=RequireBasesMeta):
     >>>     pass
     """
@@ -47,8 +48,8 @@ def require_bases(*required: type[T]) -> type[T]:
     """A decorator that adds requirements to base classes.
     Requires use of the `RequireBasesMeta` metaclass.
 
-    :return: A modified class with requirements to inherit other metaclasses.
-    :rtype: type[T]
+    Returns:
+        type[T]: A modified class with requirements to inherit other metaclasses.
     """
     def wrapper(cls: type[T]) -> type[T]:
         cls.__required_bases__ = required

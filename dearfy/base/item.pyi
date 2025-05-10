@@ -1,4 +1,5 @@
 from collections import deque
+# > Typing
 from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs, ClassVar
 # > Local Imports
 from dearfy.app import App
@@ -20,8 +21,12 @@ class ItemKwargs(TypedDict):
 # ! Base Widget Class
 
 class Item(DOMNode):
+    """Base class describing the element."""
+
     VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], Any], ...]]
+    """Iterable of validators for element settings."""
     REFERENCE_METHOD: Callable[..., Any] | None
+    """A method whose arguments will be considered as default arguments."""
 
     _nodes: ClassVar[deque[App | Item | DOMNode]]
 
@@ -41,7 +46,19 @@ class Item(DOMNode):
         show: bool = True,
         pos: Position = [],
         **kwargs: object
-    ) -> None: ...
+    ) -> None:
+        """Base class describing the element.
+
+        Args:
+            label (str, optional): Overrides 'name' as label. Defaults to ''.
+            user_data (Any | None, optional): User data for callbacks. Defaults to None.
+            use_internal_label (bool, optional): Use generated internal label instead of user specified (appends #### uuid). Defaults to True.
+            tag (Tag | None, optional): Unique id used to programmatically refer to the item. If label is unused this will be the label. Defaults to None.
+            indent (int, optional): Offsets the widget to the right the specified number multiplied by the indent style. Defaults to -1.
+            show (bool, optional): Attempt to render widget. Defaults to True.
+            pos (Position, optional): Places the item relative to window coordinates. Defaults to [].
+        """
+        ...
 
     @property
     def tag(self) -> Tag: ...

@@ -1,8 +1,10 @@
 import dearpygui.dearpygui as dpg
-from dearfy.functions import get_method_needed
-from dearfy.base import Container, ItemKwargs
-from dearfy.typing import Size, Callback
+# > Typing
 from typing_extensions import Unpack
+# > Local Imports
+from dearfy.typing import Size, Callback
+from dearfy.base import Container, ItemKwargs
+from dearfy.functions import get_method_needed
 from dearfy.validator import ValidateKwargsAction
 
 # ! Window Class
