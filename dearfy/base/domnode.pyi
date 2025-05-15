@@ -13,6 +13,8 @@ T = TypeVar('T')
 class DOMNode:
     NODE_CONTAINERABLE: ClassVar[bool]
     """Is the node a container."""
+    NODE_CONTAINER_FOR: tuple[type, ...] | None = None
+    """Types or types inherited from these types that the object can containerise."""
     
     _nodes: ClassVar[deque[DOMNode]]
     _node_parent: DOMNode | None

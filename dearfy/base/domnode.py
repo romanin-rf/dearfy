@@ -8,6 +8,7 @@ from typing_extensions import Iterator, Self
 
 class DOMNode:
     NODE_CONTAINERABLE: bool = True
+    NODE_CONTAINER_FOR: tuple[type, ...] | None = None
 
     _nodes: deque['DOMNode'] = deque()
 
@@ -47,6 +48,13 @@ class DOMNode:
     def _add_child(self, __child: 'DOMNode', /) -> None:
         if not self.NODE_CONTAINERABLE:
             raise NotImplementedError('This object type is not a container.')
+        if self.NODE_CONTAINER_FOR is not None:
+            if not (isinstance(__child, self.NODE_CONTAINER_FOR) or issubclass(type(__child), self.NODE_CONTAINER_FOR)):
+                raise NotImplementedError(
+                    f"This node cannot containerise an object type: {__child.__class__.__qualname__!r}. "
+                    "Only allowed (inherited from these types are not specified here, but they are allowed): "
+                    f"{', '.join([repr(t.__qualname__) for t in self.NODE_CONTAINER_FOR])}."
+                )
         __child._node_parent = self
         self._node_children.append(__child)
     

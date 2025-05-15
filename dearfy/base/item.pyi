@@ -23,7 +23,7 @@ class ItemKwargs(TypedDict):
 class Item(DOMNode):
     """Base class describing the element."""
 
-    VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], Any], ...]]
+    VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], dict[str, Any]], ...]]
     """Iterable of validators for element settings."""
     REFERENCE_METHOD: Callable[..., Any] | None
     """A method whose arguments will be considered as default arguments."""

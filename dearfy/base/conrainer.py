@@ -9,30 +9,9 @@ from dearfy.base.item import Item, ItemKwargs
 
 class Container(Item):
     NODE_CONTAINERABLE = True
+    NODE_CONTAINER_FOR = None
 
     _node_children: list[Item]
 
     def __init__(self, **kwargs: Unpack[ItemKwargs]) -> None:
         super().__init__(**kwargs)
-    
-    def __dearfy_preparing__(self, app: object) -> None:
-        self._app = app
-        for child in self._node_children:
-            child.__dearfy_preparing__(app)
-    
-    def __dearfy_preinit__(self) -> None:
-        for child in self._node_children:
-            child.__dearfy_preinit__()
-    
-    def __dearfy_init__(self) -> None:
-        for child in self._node_children:
-            child.__dearfy_init__()
-    
-    def __dearfy_postinit__(self) -> None:
-        for child in self._node_children:
-            child.__dearfy_postinit__()
-    
-    def __dearfy_destroy__(self) -> None:
-        super().__dearfy_destroy__()
-        for child in self._node_children:
-            child.__dearfy_destroy__()

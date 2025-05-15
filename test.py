@@ -1,19 +1,20 @@
-from dearfy.app import App
+from dearfy.app import App, action
 from dearfy.widgets import *
+from dearfy.handlers import ClickedHandler
 from rich.console import Console
 
 # ! App
 
 class MyApp(App):
     def compose(self):
-        self.button = Button(label='*click*', callback='test')
         with Window(label='Title'):
             with Group(horizontal=True):
-                yield Text('Click for SURPRISE: ')
-                yield self.button
+                with Text('Click for SURPRISE: '):
+                    yield ClickedHandler(callback='test')
+                yield Button(label='*click*', callback='test')
     
     def action_test(self, sender: str | int):
-        self.button.destroy()
+        pass
 
 # ! Variables
 
