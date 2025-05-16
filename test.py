@@ -1,4 +1,4 @@
-from dearfy.app import App, action
+from dearfy.app import App, action, ComposeResult
 from dearfy.widgets import *
 from dearfy.handlers import ClickedHandler
 from rich.console import Console
@@ -6,7 +6,7 @@ from rich.console import Console
 # ! App
 
 class MyApp(App):
-    def compose(self):
+    def compose(self) -> ComposeResult:
         with Window(label='Title'):
             with Group(horizontal=True):
                 with Text('Click for SURPRISE: '):
