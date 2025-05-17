@@ -48,8 +48,12 @@ ActionBlockModeLiteral: TypeAlias = Literal['none', 'all', 'group', 'spetific'] 
 
 def __sample_action_method__(sender: Tag, app_data: dict[str, Any] | str, user_data: Any | None) -> Any: ...
 
-def _match_call_args(method: ActionMethod, *args: object) -> Any:
-    return args[:len(list(inspect.signature(method).parameters.keys()))]
+def _match_call_args(self: object | None, method: ActionMethod, *args: object) -> tuple[object, ...]:
+    params = list(inspect.signature(method).parameters.keys())
+    if self is not None:
+        if ('self' in params) or ('app' in params):
+            return (self, *(args[:len(params) - 1]))
+    return args[:len(params)]
 
 # ! Methods
 
@@ -181,7 +185,7 @@ class Action:
         self.last_call = datetime.datetime.now()
         self.actions.set_block(True, self.indeficator, self.blockmode, self.blocks)
         try:
-            result = self.method(*_match_call_args(self.method, sender, app_data, user_data))
+            result = self.method(*_match_call_args(self.actions._app, self.method, sender, app_data, user_data))
         except:
             result = None
             loguru.logger.exception('An error has occurred in action!')
@@ -199,7 +203,7 @@ class Action:
         self.last_call = datetime.datetime.now()
         self.actions.set_block(True, self.indeficator, self.blockmode, self.blocks)
         try:
-            self.method(*_match_call_args(self.method, sender, app_data, user_data))
+            self.method(*_match_call_args(self.actions._app, self.method, sender, app_data, user_data))
         except:
             loguru.logger.exception('An error has occurred in action!')
         self.actions.set_block(False, self.indeficator, self.blockmode, self.blocks)
@@ -232,7 +236,8 @@ class Action:
 # ! Actioner Class
 
 class Actioner:
-    def __init__(self) -> None:
+    def __init__(self, app: object | None = None) -> None:
+        self._app = app
         self.__set_block_semaphore = threading.Semaphore(1)
         self.actions: dict[tuple[ActionName, ActionGroup], Action] = {}
         self.blocks: list[

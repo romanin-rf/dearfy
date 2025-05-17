@@ -81,6 +81,7 @@ class App(DOMNode):
         }
         self.__dearfy_compose__()
         self.__dearfy_init_action_attributes__()
+        self._actioner._app = self
         self._nodes.clear()
     
     def __str__(self) -> str:

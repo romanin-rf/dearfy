@@ -14,8 +14,8 @@ class MyApp(App):
                 yield Button(label='*click*', callback='test')
     
     @action('test')
-    def action_test(self, sender: str | int):
-        console.print((self, sender))
+    def action_test(self: 'MyApp', sender: str | int):
+        console.print(self.get_item(sender))
 
 # ! Variables
 
