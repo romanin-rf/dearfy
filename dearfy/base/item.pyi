@@ -1,29 +1,29 @@
 from collections import deque
 # > Typing
-from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs, ClassVar
+from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs, ClassVar, TypeAlias
 # > Local Imports
 from dearfy.app import App
+from dearfy.base.handler import Handler
 from dearfy.base.domnode import DOMNode
-from dearfy.typing import Tag, Position
+from dearfy.typing import Tag
 from dearfy.validator import ValidatorKwargsBase
 
 # ! Typing
+
+ValidatorKwargsType: TypeAlias = type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], dict[str, Any]]
 
 class ItemKwargs(TypedDict):
     label: NotRequired[str]
     user_data: NotRequired[Any | None]
     use_internal_label: NotRequired[bool]
     tag: NotRequired[Tag | None]
-    indent: NotRequired[int]
-    show: NotRequired[bool]
-    pos: NotRequired[Position]
 
 # ! Base Widget Class
 
 class Item(DOMNode):
     """Base class describing the element."""
 
-    VALIDATORS_KWARGS: ClassVar[tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], dict[str, Any]], ...]]
+    VALIDATORS_KWARGS: ClassVar[tuple[ValidatorKwargsType, ...]]
     """Iterable of validators for element settings."""
     REFERENCE_METHOD: Callable[..., Any] | None
     """A method whose arguments will be considered as default arguments."""
@@ -31,7 +31,7 @@ class Item(DOMNode):
     _nodes: ClassVar[deque[App | Item | DOMNode]]
 
     _node_parent: App | Item | DOMNode
-    _node_children: list
+    _node_children: list[Item | Handler]
     _app: App | None
     _config: dict[str, Any]
 
@@ -42,9 +42,6 @@ class Item(DOMNode):
         user_data: Any | None = None,
         use_internal_label: bool = True,
         tag: Tag | None = None,
-        indent: int = -1,
-        show: bool = True,
-        pos: Position = [],
         **kwargs: object
     ) -> None:
         """Base class describing the element.
@@ -74,6 +71,8 @@ class Item(DOMNode):
     def __dearfy_init__(self) -> None: ...
     def __dearfy_postinit__(self) -> None: ...
     def __dearfy_destroy__(self) -> None: ...
+
+    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item: ...
 
     def get_configuration(self) -> dict[str, Any]: ...
     def configurate(self, **kwargs: object) -> None: ...

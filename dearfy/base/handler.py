@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dearpygui.dearpygui as dpg
 # > Typing
-from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs
+from typing_extensions import Any, TypedDict, NotRequired, Callable, Self, ParamSpecKwargs
 # > Local Imports
 from dearfy.field import field
 from dearfy.base.domnode import DOMNode
@@ -28,7 +28,7 @@ class Handler(DOMNode):
 
     REFERENCE_METHOD: Callable[..., Any] | None = None
 
-    VALIDATORS_KWARGS: tuple[type[ValidatorKwargsBase] | Callable[[Handler, ParamSpecKwargs], dict[str, Any]], ...] = (ValidateKwargsAction, )
+    VALIDATORS_KWARGS: tuple[type[ValidatorKwargsBase] | Callable[[Self, ParamSpecKwargs], dict[str, Any]], ...] = (ValidateKwargsAction, )
 
     def __init__(
         self,

@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
 # > Dearfy
 from dearfy.field import field
-from dearfy.typing import Tag, Callback
+from dearfy.typing import Tag, Callback, Position
 from dearfy.base import Container, ItemKwargs, Enableable
 from dearfy.functions import get_method_needed
 from dearfy.validator import ValidateKwargsAction
@@ -17,6 +17,9 @@ class Group(Container, Enableable):
     def __init__(
         self,
         *,
+        indent: int = -1,
+        show: bool = True,
+        pos: Position | None = None,
         width: int = 0,
         height: int = 0,
         parent: Tag | None = None,
@@ -35,6 +38,9 @@ class Group(Container, Enableable):
         **kwargs: Unpack[ItemKwargs]
     ) -> None:
         super().__init__(
+            indent=indent,
+            show=show,
+            pos=field(pos, default_factory=list, nullable=False),
             width=width,
             height=height,
             parent=field(parent, 0, nullable=False),

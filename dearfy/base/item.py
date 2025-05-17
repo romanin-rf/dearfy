@@ -1,24 +1,25 @@
+from __future__ import annotations
+
 import dearpygui.dearpygui as dpg
 # > Typing
-from typing_extensions import Any, TypedDict, Callable, ParamSpecKwargs, NotRequired
+from typing_extensions import Any, TypedDict, Callable, ParamSpecKwargs, NotRequired, TypeAlias
 # > Local Imports
 from dearfy.field import field
 from dearfy.base.domnode import DOMNode
 from dearfy.base.handler import Handler
-from dearfy.typing import Tag, Position
+from dearfy.typing import Tag
 from dearfy.functions import formatting_kwargs, get_method_needed
 from dearfy.validator import ValidatorKwargsBase
 
 # ! Typing
+
+ValidatorKwargsType: TypeAlias = type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], dict[str, Any]]
 
 class ItemKwargs(TypedDict):
     label: NotRequired[str]
     user_data: NotRequired[Any | None]
     use_internal_label: NotRequired[bool]
     tag: NotRequired[Tag | None]
-    indent: NotRequired[int]
-    show: NotRequired[bool]
-    pos: NotRequired[Position]
 
 # ! Base Widget Class
 
@@ -26,9 +27,11 @@ class Item(DOMNode):
     NODE_CONTAINERABLE = True
     NODE_CONTAINER_FOR = (Handler, )
     
-    VALIDATORS_KWARGS: tuple[type[ValidatorKwargsBase] | Callable[['Item', ParamSpecKwargs], dict[str, Any]], ...] = ()
+    VALIDATORS_KWARGS: tuple[ValidatorKwargsType, ...] = ()
     REFERENCE_METHOD: Callable[..., Any] | None = None
     
+    _node_children: list[Item]
+
     def __init__(
         self,
         *,
@@ -36,9 +39,6 @@ class Item(DOMNode):
         user_data: Any | None = None,
         use_internal_label: bool = True,
         tag: Tag | None = None,
-        indent: int = -1,
-        show: bool = True,
-        pos: Position | None = None,
         **kwargs: object
     ) -> None:
         super().__init__()
@@ -48,9 +48,6 @@ class Item(DOMNode):
             'label': label,
             'user_data': user_data,
             'use_internal_label': use_internal_label,
-            'indent': indent,
-            'show': show,
-            'pos': field(pos, default_factory=list, nullable=False),
             **kwargs
         }
     
@@ -99,6 +96,17 @@ class Item(DOMNode):
         self._config['tag'] = 0
         for child in self._node_children:
             child.__dearfy_destroy__()
+    
+    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item:
+        if self.inited:
+            try:
+                if by_main:
+                    return self._node_main_parent._get_by_attr('tag', tag)
+                else:
+                    return self._get_by_attr('tag', tag)
+            except AttributeError:
+                pass
+        raise RuntimeError('There is no Item with this tag.')
     
     def get_configuration(self) -> dict[str, Any]:
         configuration = dpg.get_item_configuration()

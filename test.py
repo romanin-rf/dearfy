@@ -13,8 +13,9 @@ class MyApp(App):
                     yield ClickedHandler(callback='test')
                 yield Button(label='*click*', callback='test')
     
+    @action('test')
     def action_test(self, sender: str | int):
-        pass
+        console.print((self, sender))
 
 # ! Variables
 

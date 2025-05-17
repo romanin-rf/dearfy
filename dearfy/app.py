@@ -5,7 +5,7 @@ import dearpygui.dearpygui as dpg
 from typing_extensions import TypeAlias, Iterator
 # > Local Imports
 from dearfy.base import Item, DOMNode
-from dearfy.typing import Color, FilePath
+from dearfy.typing import Color, FilePath, Tag
 from dearfy.field import field
 from dearfy.action import Actioner, Action
 from dearfy.functions import formatting_kwargs, get_method_needed
@@ -125,6 +125,16 @@ class App(DOMNode):
     def __dearfy_destroy__(self) -> None:
         for child in self._node_children:
             child.__dearfy_destroy__()
+    
+    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item:
+        try:
+            if by_main:
+                return self._node_main_parent._get_by_attr('tag', tag)
+            else:
+                return self._get_by_attr('tag', tag)
+        except AttributeError:
+            pass
+        raise RuntimeError('There is no Item with this tag.')
 
     def run(self) -> None:
         self._state = AppState.PREPARING

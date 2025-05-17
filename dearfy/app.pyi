@@ -3,7 +3,7 @@
 from typing_extensions import TypeAlias, Iterable, Iterator, ClassVar
 # > Local Imports
 from dearfy.base import Item, DOMNode
-from dearfy.typing import Color, FilePath
+from dearfy.typing import Color, FilePath, Tag
 from dearfy.action import (
     Actioner, Action,
     ActionBlockMode, ActionBlockModeLiteral, 
@@ -78,6 +78,8 @@ class App(DOMNode):
     def __dearfy_preinit__(self) -> None: ...
     def __dearfy_init__(self) -> None: ...
     def __dearfy_postinit__(self) -> None: ...
+
+    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item: ...
 
     def run(self) -> None: ...
 
