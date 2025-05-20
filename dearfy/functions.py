@@ -1,4 +1,3 @@
-import time
 import ctypes
 import inspect
 import dearpygui.dearpygui as dpg
@@ -35,16 +34,33 @@ def get_method_needed(method: Callable[..., Any], **kwargs: T) -> dict[str, T]:
 # ! For DearPyGUI Methods
 
 def wait_frames(count: int, *, delay: int=1) -> None:
+    """Waiting for a certain number of frames. Needed to initialise DearPyGUI objects on the fly, before using them.
+    
+    Recommended value for `count = 3`.
+
+    Args:
+        count (int): The number of frames the programme will wait before continuing execution.
+        delay (int, optional): Minimum wait in milliseconds. Defaults to 1.
+    """
     for i in range(count):
         dpg.split_frame(delay=delay)
 
-def get_item_size(item: str | int, *, wait: bool=False) -> tuple[float, float]:
+def get_item_size(item: Tag, *, wait: bool=False) -> tuple[float, float]:
+    """Getting the size of an object with expectation.
+
+    Args:
+        item (Tag): The tag or id of the object.
+        wait (bool, optional): Whether to use the wait. Defaults to False.
+
+    Returns:
+        tuple[float, float]: Size of the object in (width, height)
+    """
     if wait:
         wait_frames(3)
     return float(dpg.get_item_width(item)), float(dpg.get_item_height(item))
 
 def match_item_position(
-    item: str | int,
+    item: Tag,
     x_justing: Literal['left', 'center', 'right']='center',
     y_justing: Literal['top', 'center', 'bottom']='center',
     padding: tuple[int, int, int, int] | Iterable[int] = (0, 0, 0, 0),
@@ -80,14 +96,13 @@ def match_item_position(
 # ! Low-level Methods
 
 def get_object_by_address(__object_address: int) -> Any:
+    """Get any python object, by its address (the address that is printed when the `id(object)` method is called).
+    ##### !!! WARNING !!! The method is unsafe and may cause unexpected errors (`RuntimeError`).
+
+    Args:
+        __object_address (int): The address that is getted when the `id(object)` method is called.
+
+    Returns:
+        Any: Any python object.
+    """
     return ctypes.cast(__object_address, ctypes.py_object).value
-
-"""Calculates the position of an object relative to the size of the viewport
-
-:param item: Tag or id of DearPyGUI object
-:type item: str | int
-:param wait: Waiting for the window to be fully prepared, defaults to False
-:type wait: bool, optional
-:return: Object position
-:rtype: tuple[float, float]
-"""

@@ -7,7 +7,7 @@ from dearfy.field import field
 from dearfy.functions import get_method_needed
 from dearfy.base.handler import ItemHandler, ItemHandlerKwargs
 
-# ! Clicked Handler Class
+# ! Double Clicked Handler Class
 
 class DoubleClickedItemHandler(ItemHandler):
     REFERENCE_METHOD = dpg.add_item_double_clicked_handler

@@ -1,10 +1,10 @@
 import time
 from rich.console import Console
 # > Dearfy
-from dearfy.typing import Tag
 from dearfy.widgets import *
+from dearfy.handlers import *
+from dearfy.typing import Tag
 from dearfy.app import App, action, ComposeResult
-from dearfy.handlers import ClickedItemHandler
 
 # ! App
 
