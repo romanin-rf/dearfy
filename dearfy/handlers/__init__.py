@@ -1,5 +1,6 @@
-from dearfy.handlers.clicked import ClickedHandler
+from dearfy.handlers.clicked import ClickedItemHandler
+#from dearfy.handlers.double_clicked import DoubleClickedHandler
 
 __all__ = [
-    'ClickedHandler'
+    'ClickedItemHandler'#, 'DoubleClickedHandler'
 ]

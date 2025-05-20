@@ -127,12 +127,10 @@ class App(DOMNode):
         for child in self._node_children:
             child.__dearfy_destroy__()
     
-    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item:
+    def get_item(self, tag: Tag, *, by_main: bool=True) -> Item:
         try:
-            if by_main:
-                return self._node_main_parent._get_by_attr('tag', tag)
-            else:
-                return self._get_by_attr('tag', tag)
+            node = self._node_main_parent if by_main else self
+            return node._get_node_by_attr('tag', tag)
         except AttributeError:
             pass
         raise RuntimeError('There is no Item with this tag.')
@@ -146,12 +144,12 @@ class App(DOMNode):
         self.__dearfy_preinit__()
         self._state = AppState.INIT
         self.__dearfy_init__()
+        dpg.setup_dearpygui()
         self._state = AppState.POSTINIT
         self.__dearfy_postinit__()
-        dpg.setup_dearpygui()
-        dpg.show_viewport(**(self._gkwagrs['show_viewport']))
         self._state = AppState.RUNNING
         loguru.logger.trace(self._to_rich_tree())
+        dpg.show_viewport(**(self._gkwagrs['show_viewport']))
         dpg.start_dearpygui()
         dpg.destroy_context()
         self._state = AppState.NONE

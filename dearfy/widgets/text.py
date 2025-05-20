@@ -57,7 +57,6 @@ class Text(Item):
         )
     
     def __dearfy_init__(self) -> None:
-        if self.inited:
-            return
         kwargs = get_method_needed(dpg.add_text, **self._config)
         self._config['tag'] = dpg.add_text(**kwargs)
+        super().__dearfy_init__()

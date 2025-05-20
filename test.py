@@ -1,6 +1,6 @@
 from dearfy.app import App, action, ComposeResult
 from dearfy.widgets import *
-from dearfy.handlers import ClickedHandler
+from dearfy.handlers import ClickedItemHandler
 from rich.console import Console
 
 # ! App
@@ -9,9 +9,9 @@ class MyApp(App):
     def compose(self) -> ComposeResult:
         with Window(label='Title'):
             with Group(horizontal=True):
-                with Text('Click for SURPRISE: '):
-                    yield ClickedHandler(callback='test')
+                yield Text('Click for SURPRISE: ', tag='text-click-surprise')
                 yield Button(label='*click*', callback='test')
+        yield ClickedItemHandler(callback='test', parent='text-click-surprise')
     
     @action('test')
     def action_test(app: 'MyApp', sender: str | int):

@@ -3,7 +3,7 @@ from collections import deque
 from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs, ClassVar, TypeAlias
 # > Local Imports
 from dearfy.app import App
-from dearfy.base.handler import Handler
+from dearfy.base.handler import ItemHandler
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag
 from dearfy.validator import ValidatorKwargsBase
@@ -31,9 +31,10 @@ class Item(DOMNode):
     _nodes: ClassVar[deque[App | Item | DOMNode]]
 
     _node_parent: App | Item | DOMNode
-    _node_children: list[Item | Handler]
+    _node_children: list[Item | ItemHandler]
     _app: App | None
     _config: dict[str, Any]
+    _state: int
 
     def __init__(
         self,
@@ -72,6 +73,7 @@ class Item(DOMNode):
     def __dearfy_postinit__(self) -> None: ...
     def __dearfy_destroy__(self) -> None: ...
 
+    def _move_item_to(self, parent: Tag) -> None: ...
     def get_item(self, tag: Tag, *, by_main: bool=False) -> Item: ...
 
     def get_configuration(self) -> dict[str, Any]: ...

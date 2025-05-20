@@ -1,8 +1,11 @@
+import time
 import ctypes
 import inspect
 import dearpygui.dearpygui as dpg
 # > Typing
 from typing_extensions import Any, Literal, Iterable, Callable, TypeVar
+# > Local Imports
+from dearfy.typing import Tag
 
 # ! Types
 
@@ -30,6 +33,21 @@ def get_method_needed(method: Callable[..., Any], **kwargs: T) -> dict[str, T]:
     return new_kwargs
 
 # ! For DearPyGUI Methods
+
+def wait_frames(count: int) -> None:
+    for i in range(count):
+        dpg.split_frame(delay=1)
+
+def get_id_by_tag(tag: Tag) -> int:
+    if isinstance(tag, int):
+        return tag
+    while (not isinstance(value := dpg.get_alias_id(tag), int)) or (value == 0):
+        time.sleep(1E-3)
+    return value
+
+def wait_alias(alias: str) -> None:
+    while not dpg.does_item_exist(alias):
+        time.sleep(1E-3)
 
 def get_item_size(item: str | int, *, wait: bool=False) -> tuple[float, float]:
     if wait:

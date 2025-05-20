@@ -85,7 +85,6 @@ class Button(Item, Enableable):
         )
     
     def __dearfy_init__(self) -> None:
-        if self.inited:
-            return
         kwargs = get_method_needed(dpg.add_button, **self._config)
         self._config['tag'] = dpg.add_button(**kwargs)
+        super().__dearfy_init__()

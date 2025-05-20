@@ -60,8 +60,6 @@ class Group(Container, Enableable):
         )
     
     def __dearfy_init__(self) -> None:
-        if self.inited:
-            return
         if self._node_children:
             kwargs = get_method_needed(dpg.add_group, **self._config)
             with dpg.group(**kwargs) as tag:

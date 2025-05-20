@@ -17,7 +17,7 @@ class DOMNode:
     def __init__(self) -> None:
         self._node_children: list[DOMNode] = []
         self._node_parent: DOMNode | None = None
-    
+
     def __str__(self) -> str:
         return f'{self.__class__.__name__}()'
     
@@ -50,9 +50,11 @@ class DOMNode:
     @property
     def _node_main_parent(self) -> DOMNode:
         main_parent = self._node_parent
-        while main_parent._node_parent is not None:
+        while main_parent is not None:
             if main_parent._node_parent is not None:
                 main_parent = main_parent._node_parent
+            else:
+                break
         if main_parent is not None:
             return main_parent
         return self
@@ -75,14 +77,17 @@ class DOMNode:
             __child._node_parent = None
             self._node_children.remove(__child)
     
-    def _get_by_attr(self, __attr_name: str, __attr_value: Any, /) -> DOMNode:
+    def _pop_child(self, __index: int=-1, /) -> DOMNode:
+        return self._node_children.pop(__index)
+    
+    def _get_node_by_attr(self, __attr_name: str, __attr_value: Any, /) -> DOMNode:
         for node in self._node_children:
             if hasattr(node, __attr_name):
                 if getattr(node, __attr_name) == __attr_value:
                     return node
         for node in self._node_children:
             try:
-                return node._get_by_attr(__attr_name, __attr_value)
+                return node._get_node_by_attr(__attr_name, __attr_value)
             except AttributeError:
                 continue
         raise AttributeError('Node with this attribute value does not exist.')
