@@ -34,25 +34,13 @@ def get_method_needed(method: Callable[..., Any], **kwargs: T) -> dict[str, T]:
 
 # ! For DearPyGUI Methods
 
-def wait_frames(count: int) -> None:
+def wait_frames(count: int, *, delay: int=1) -> None:
     for i in range(count):
-        dpg.split_frame(delay=1)
-
-def get_id_by_tag(tag: Tag) -> int:
-    if isinstance(tag, int):
-        return tag
-    while (not isinstance(value := dpg.get_alias_id(tag), int)) or (value == 0):
-        time.sleep(1E-3)
-    return value
-
-def wait_alias(alias: str) -> None:
-    while not dpg.does_item_exist(alias):
-        time.sleep(1E-3)
+        dpg.split_frame(delay=delay)
 
 def get_item_size(item: str | int, *, wait: bool=False) -> tuple[float, float]:
     if wait:
-        for _ in range(3):
-            dpg.split_frame(delay=1)
+        wait_frames(3)
     return float(dpg.get_item_width(item)), float(dpg.get_item_height(item))
 
 def match_item_position(
@@ -87,7 +75,7 @@ def match_item_position(
                     raise ValueError(f'{x_justing=!r}')
         else:
             raise RuntimeError(f'There is no object with this tag/id: {item!r}')
-    return
+    return 0., 0.
 
 # ! Low-level Methods
 

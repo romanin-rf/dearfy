@@ -1,7 +1,10 @@
-from dearfy.app import App, action, ComposeResult
-from dearfy.widgets import *
-from dearfy.handlers import ClickedItemHandler
+import time
 from rich.console import Console
+# > Dearfy
+from dearfy.typing import Tag
+from dearfy.widgets import *
+from dearfy.app import App, action, ComposeResult
+from dearfy.handlers import ClickedItemHandler
 
 # ! App
 
@@ -13,9 +16,10 @@ class MyApp(App):
                 yield Button(label='*click*', callback='test')
         yield ClickedItemHandler(callback='test', parent='text-click-surprise')
     
-    @action('test')
-    def action_test(app: 'MyApp', sender: str | int):
+    @action('test', callmode='one', blockmode='all', threaded=True)
+    def action_test(app: 'MyApp', sender: Tag):
         console.print(app.get_item(sender))
+        time.sleep(10)
 
 # ! Variables
 

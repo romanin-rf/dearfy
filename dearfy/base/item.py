@@ -75,6 +75,8 @@ class Item(DOMNode):
     
     def __dearfy_preparing__(self, app: object) -> None:
         loguru.logger.trace(f'[red]Call[/red]: {self!r}.__dearfy_preparing__({app!r})')
+        if bool(self._state & 0b0001):
+            return
         self._app = app
         for child in self._node_children:
             child.__dearfy_preparing__(app)
@@ -82,6 +84,8 @@ class Item(DOMNode):
     
     def __dearfy_preinit__(self) -> None:
         loguru.logger.trace(f'[red]Call[/red]: {self!r}.__dearfy_preinit__()')
+        if bool((self._state & 0b0010) >> 1):
+            return
         for vkt in self.VALIDATORS_KWARGS:
             if issubclass(vkt, ValidatorKwargsBase):
                 self._config = vkt(item=self, app=self._app).validate(**self._config)
@@ -93,12 +97,16 @@ class Item(DOMNode):
     
     def __dearfy_init__(self) -> None:
         loguru.logger.trace(f'[red]Call[/red]: {self!r}.__dearfy_init__()')
+        if bool((self._state & 0b0100) >> 2):
+            return
         for child in self._node_children:
             child.__dearfy_init__()
         self._state |= (1 << 2)
     
     def __dearfy_postinit__(self) -> None:
         loguru.logger.trace(f'[red]Call[/red]: {self!r}.__dearfy_postinit__()')
+        if bool((self._state & 0b1000) >> 3):
+            return
         for child in self._node_children:
             child.__dearfy_postinit__()
         self._state |= (1 << 3)

@@ -179,8 +179,6 @@ class Action:
         app_data: dict[str, Any] | str | None,
         user_data: Any | None=None
     ) -> Any | None:
-        if not self.can_call():
-            return
         self.state |= ActionState.RUNNING
         self.last_call = datetime.datetime.now()
         self.actions.set_block(True, self.indeficator, self.blockmode, self.blocks)
@@ -219,18 +217,22 @@ class Action:
         if not self.enabled:
             return
         if not self.__threaded:
+            if not self.can_call():
+                loguru.logger.trace(f"[yellow]Cancel[/yellow] action <{self.__indeficator}> because the call is not currently available.")
+                return
             loguru.logger.trace(f"[green]Starting[/green] action <{self.__indeficator}> in [gray bold]simple mode[/gray bold].")
             return self.__call_main__(sender, app_data, user_data)
         else:
             if not self.can_call():
+                loguru.logger.trace(f"[yellow]Cancel[/yellow] action <{self.__indeficator}> because the call is not currently available.")
                 return
             if self.__thread is not None:
                 if self.__thread.is_alive():
+                    loguru.logger.trace(f"[yellow]Cancel[/yellow] action <{self.__indeficator}> because the previous call [gray bold]in the thread[/gray bold] has not yet ended.")
                     return
             loguru.logger.trace(f"[green]Starting[/green] action <{self.__indeficator}> in [gray bold]thread mode[/gray bold].")
             self.__thread = threading.Thread(target=self.__call_thread__, args=(sender, app_data, user_data))
             self.__thread.start()
-            loguru.logger.trace(f"[yellow]Stopped[/yellow] action <{self.__indeficator}> in [gray bold]thread mode[/gray bold].")
             return
 
 # ! Actioner Class

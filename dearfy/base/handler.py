@@ -9,7 +9,7 @@ from typing_extensions import Any, TypedDict, NotRequired, Callable, Self, Param
 from dearfy.field import field
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag, Callback
-from dearfy.functions import formatting_kwargs, get_method_needed, wait_alias
+from dearfy.functions import formatting_kwargs, get_method_needed
 from dearfy.validator import ValidatorKwargsBase, ValidateKwargsAction
 
 # ! Typing

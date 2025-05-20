@@ -35,6 +35,15 @@ class Item(DOMNode):
     _app: App | None
     _config: dict[str, Any]
     _state: int
+    """Bit flag of item status.
+
+    ```
+    1 << 0 (1) # PREPARED
+    1 << 1 (2) # PREINITED
+    1 << 2 (4) # INITED
+    1 << 4 (8) # POSTINITED
+    ```
+    """
 
     def __init__(
         self,
