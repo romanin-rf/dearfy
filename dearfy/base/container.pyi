@@ -1,9 +1,5 @@
-
-# > Typing
-from typing_extensions import Unpack
-
-# > Local Imports
-from dearfy.base.item import Item, ItemKwargs
+from dearfy.app import App
+from dearfy.base.item import Item
 
 # ! Container Base Class
 
@@ -12,7 +8,7 @@ class Container(Item):
 
     _node_children: list[Item]
     
-    def __dearfy_preparing__(self, app: object) -> None: ...
+    def __dearfy_preparing__(self, app: App) -> None: ...
     def __dearfy_preinit__(self) -> None: ...
     def __dearfy_init__(self) -> None: ...
     def __dearfy_postinit__(self) -> None: ...
