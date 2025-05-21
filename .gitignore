@@ -2,6 +2,8 @@
 
 # My Python Ignores
 .vscode/
+.notebooks/
+.tools/
 poetry.lock
 
 
