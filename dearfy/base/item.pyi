@@ -3,7 +3,6 @@ from collections import deque
 from typing_extensions import Any, TypedDict, NotRequired, Callable, ParamSpecKwargs, ClassVar, TypeAlias
 # > Local Imports
 from dearfy.app import App
-from dearfy.base.handler import ItemHandler
 from dearfy.base.domnode import DOMNode
 from dearfy.typing import Tag
 from dearfy.validator import ValidatorKwargsBase
@@ -31,7 +30,7 @@ class Item(DOMNode):
     _nodes: ClassVar[deque[App | Item | DOMNode]]
 
     _node_parent: App | Item | DOMNode
-    _node_children: list[Item | ItemHandler]
+    _node_children: list[Item]
     _app: App | None
     _config: dict[str, Any]
     _state: int
@@ -48,7 +47,7 @@ class Item(DOMNode):
     def __init__(
         self,
         *,
-        label: str='',
+        label: str | None = None,
         user_data: Any | None = None,
         use_internal_label: bool = True,
         tag: Tag | None = None,
@@ -61,9 +60,6 @@ class Item(DOMNode):
             user_data (Any | None, optional): User data for callbacks. Defaults to None.
             use_internal_label (bool, optional): Use generated internal label instead of user specified (appends #### uuid). Defaults to True.
             tag (Tag | None, optional): Unique id used to programmatically refer to the item. If label is unused this will be the label. Defaults to None.
-            indent (int, optional): Offsets the widget to the right the specified number multiplied by the indent style. Defaults to -1.
-            show (bool, optional): Attempt to render widget. Defaults to True.
-            pos (Position, optional): Places the item relative to window coordinates. Defaults to [].
         """
         ...
 
@@ -83,11 +79,9 @@ class Item(DOMNode):
     def __dearfy_destroy__(self) -> None: ...
 
     def _move_item_to(self, parent: Tag) -> None: ...
-    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item: ...
+    def get_item(self, tag: Tag) -> Item: ...
 
     def get_configuration(self) -> dict[str, Any]: ...
     def configurate(self, **kwargs: object) -> None: ...
 
     def destroy(self) -> None: ...
-    def show(self) -> None: ...
-    def hide(self) -> None: ...

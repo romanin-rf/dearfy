@@ -1,8 +1,9 @@
 import ctypes
 import inspect
+from re import I
 import dearpygui.dearpygui as dpg
 # > Typing
-from typing_extensions import Any, Literal, Iterable, Callable, TypeVar
+from typing_extensions import Any, Literal, Iterable, Iterator,  Callable, TypeIs, TypeVar
 # > Local Imports
 from dearfy.typing import Tag
 

@@ -12,9 +12,13 @@ class MyApp(App):
     def compose(self) -> ComposeResult:
         with Window(label='Title'):
             with Group(horizontal=True):
-                yield Text('Click for SURPRISE: ', tag='text-click-surprise')
-                yield Button(label='*click*', callback='test')
+                with Text('Click for SURPRISE: ', tag='text-click-surprise'):
+                    with Tooltip(delay=0.2):
+                        yield Text(':3')
+                yield Button(label='*click*', callback='test', tag='click-button')
         yield ClickedItemHandler(callback='test', parent='text-click-surprise')
+        with Tooltip(delay=0.2, parent='click-button'):
+            yield Text(':3')
     
     @action('test', callmode='one', blockmode='all', threaded=True)
     def action_test(app: 'MyApp', sender: Tag):

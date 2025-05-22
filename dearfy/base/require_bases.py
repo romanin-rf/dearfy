@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 # > Typing
-from typing_extensions import Any, TypeVar
+from typing_extensions import Any, Callable, TypeVar, get_type_hints, Annotated
 
 # ! Types
 
 T = TypeVar('T')
+CT = TypeVar('CT')
 
 # ! Require Bases Metaclass
 
@@ -44,14 +45,18 @@ class RequireBasesMeta(type):
                 )
         return cls
 
-def require_bases(*required: type[T]) -> type[T]:
+def require_bases(*required: type[T]) -> Callable[[type[CT]], Annotated[type[CT], type[T]]]:
     """A decorator that adds requirements to base classes.
     Requires use of the `RequireBasesMeta` metaclass.
 
     Returns:
         type[T]: A modified class with requirements to inherit other metaclasses.
     """
-    def wrapper(cls: type[T]) -> type[T]:
+    def wrapper(cls: type[CT]) -> type[CT]:
         cls.__required_bases__ = required
+        if not hasattr(cls, '__annotations__'):
+            cls.__annotations__ = {}
+        for base in required:
+            cls.__annotations__.update(get_type_hints(base))
         return cls
     return wrapper

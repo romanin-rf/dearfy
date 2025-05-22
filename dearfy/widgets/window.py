@@ -4,27 +4,27 @@ from typing_extensions import Unpack
 # > Local Imports
 from dearfy.field import field
 from dearfy.typing import Size, Callback, Position
-from dearfy.base import Container, ItemKwargs
+from dearfy.base import Item, ItemKwargs, Showable
 from dearfy.functions import get_method_needed
 from dearfy.validator import ValidateKwargsAction
 
 # ! Window Class
 
-class Window(Container):
+class Window(Item, Showable):
     REFERENCE_METHOD = dpg.add_window
     VALIDATORS_KWARGS = (ValidateKwargsAction, )
     
     def __init__(
         self,
         *,
+        width: int = 0,
+        height: int = 0,
         indent: int = -1,
         show: bool = True,
         pos: Position | None = None,
-        width: int = 0,
-        height: int = 0,
         delay_search: bool = False,
-        min_size: Size = [100, 100],
-        max_size: Size = [30000, 30000],
+        min_size: Size | None = None,
+        max_size: Size | None = None,
         menubar: bool = False,
         collapsed: bool = False,
         autosize: bool = False,
@@ -48,14 +48,14 @@ class Window(Container):
         **kwargs: Unpack[ItemKwargs]
     ) -> None:
         super().__init__(
-            indent=indent,
-            show=show,
-            pos=field(pos, default_factory=list, nullable=False),
             width=width,
             height=height,
+            indent=indent,
+            show=show,
+            pos=field(pos, default_factory=list),
             delay_search=delay_search,
-            min_size=min_size,
-            max_size=max_size,
+            min_size=field(min_size, default=[100, 100]),
+            max_size=field(max_size, default=[30000, 30000]),
             menubar=menubar,
             collapsed=collapsed,
             autosize=autosize,

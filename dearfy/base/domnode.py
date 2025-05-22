@@ -10,7 +10,6 @@ from typing_extensions import Any, Iterator, Self
 
 class DOMNode:
     NODE_CONTAINERABLE: bool = True
-    NODE_CONTAINER_FOR: tuple[type, ...] | None = None
 
     _nodes: deque[DOMNode] = deque()
 
@@ -49,26 +48,16 @@ class DOMNode:
     
     @property
     def _node_main_parent(self) -> DOMNode:
+        if self._node_parent is None:
+            return self
         main_parent = self._node_parent
-        while main_parent is not None:
-            if main_parent._node_parent is not None:
-                main_parent = main_parent._node_parent
-            else:
-                break
-        if main_parent is not None:
-            return main_parent
-        return self
+        while main_parent._node_parent is not None:
+            main_parent = main_parent._node_parent
+        return main_parent
     
     def _add_child(self, __child: DOMNode, /) -> None:
         if not self.NODE_CONTAINERABLE:
             raise NotImplementedError('This object type is not a container.')
-        if self.NODE_CONTAINER_FOR is not None:
-            if not (isinstance(__child, self.NODE_CONTAINER_FOR) or issubclass(type(__child), self.NODE_CONTAINER_FOR)):
-                raise NotImplementedError(
-                    f"This node cannot containerise an object type: {__child.__class__.__qualname__!r}. "
-                    "Only allowed (inherited from these types are not specified here, but they are allowed): "
-                    f"{', '.join([repr(t.__qualname__) for t in self.NODE_CONTAINER_FOR])}."
-                )
         __child._node_parent = self
         self._node_children.append(__child)
     
@@ -81,6 +70,9 @@ class DOMNode:
         return self._node_children.pop(__index)
     
     def _get_node_by_attr(self, __attr_name: str, __attr_value: Any, /) -> DOMNode:
+        if hasattr(self, __attr_name):
+            if getattr(self, __attr_name) == __attr_value:
+                return self
         for node in self._node_children:
             if hasattr(node, __attr_name):
                 if getattr(node, __attr_name) == __attr_value:
@@ -89,17 +81,25 @@ class DOMNode:
             try:
                 return node._get_node_by_attr(__attr_name, __attr_value)
             except AttributeError:
-                continue
+                pass
         raise AttributeError('Node with this attribute value does not exist.')
     
     def _to_rich_tree(self) -> Tree:
-        tree = Tree(repr(self), highlight=True)
+        if self.NODE_CONTAINERABLE:
+            s = '▼' if self._node_children else '►'
+        else:
+            s = '•'
+        tree = Tree(f"{s} {self!r}", highlight=True)
         self._build_rich_tree_recursive(self, tree)
         return tree
     
     def _build_rich_tree_recursive(self, node: DOMNode, parent_tree: Tree) -> None:
         for child in node._node_children:
-            branch = parent_tree.add(repr(child))
+            if child.NODE_CONTAINERABLE:
+                s = '▼' if child._node_children else '►'
+            else:
+                s = '•'
+            branch = parent_tree.add(f"{s} {child!r}")
             self._build_rich_tree_recursive(child, branch)
     
     def compose(self) -> Iterator[DOMNode]:

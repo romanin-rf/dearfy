@@ -127,28 +127,37 @@ class App(DOMNode):
         for child in self._node_children:
             child.__dearfy_destroy__()
     
-    def get_item(self, tag: Tag, *, by_main: bool=True) -> Item:
+    def get_item(self, tag: Tag) -> Item:
         try:
-            node = self._node_main_parent if by_main else self
-            return node._get_node_by_attr('tag', tag)
+            return self._node_main_parent._get_node_by_attr('tag', tag)
         except AttributeError:
             pass
-        raise RuntimeError('There is no Item with this tag.')
+        raise RuntimeError(
+            "There is no Item with this tag. "
+            f"_node_main_parent={self._node_main_parent!r}"
+        )
 
     def run(self) -> None:
         self._state = AppState.PREPARING
         self.__dearfy_preparing__()
+        loguru.logger.trace('[green]▬▬▬▬▬[/green] [yellow]AFTER PREPARING[/yellow] [green]▬▬▬▬▬[/green]')
+        loguru.logger.trace(self._to_rich_tree())
         dpg.create_context()
         dpg.create_viewport(**(self._gkwagrs['create_viewport']))
         self._state = AppState.PREINIT
         self.__dearfy_preinit__()
+        loguru.logger.trace('[green]▬▬▬▬▬[/green] [yellow]AFTER PREINIT[/yellow] [green]▬▬▬▬▬[/green]')
+        loguru.logger.trace(self._to_rich_tree())
         self._state = AppState.INIT
         self.__dearfy_init__()
+        loguru.logger.trace('[green]▬▬▬▬▬[/green] [yellow]AFTER INIT[/yellow] [green]▬▬▬▬▬[/green]')
+        loguru.logger.trace(self._to_rich_tree())
         dpg.setup_dearpygui()
         self._state = AppState.POSTINIT
         self.__dearfy_postinit__()
-        self._state = AppState.RUNNING
+        loguru.logger.trace('[green]▬▬▬▬▬[/green] [yellow]AFTER POSTINIT[/yellow] [green]▬▬▬▬▬[/green]')
         loguru.logger.trace(self._to_rich_tree())
+        self._state = AppState.RUNNING
         dpg.show_viewport(**(self._gkwagrs['show_viewport']))
         dpg.start_dearpygui()
         dpg.destroy_context()

@@ -18,7 +18,7 @@ class DoubleClickedItemHandler(ItemHandler):
         **kwargs: Unpack[ItemHandlerKwargs]
     ) -> None:
         super().__init__(
-            button=field(button, -1, nullable=False),
+            button=field(button, -1),
             **kwargs
         )
 

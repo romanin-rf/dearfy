@@ -2,7 +2,7 @@ import dearpygui.dearpygui as dpg
 # > Dearfy
 from dearfy.field import field
 from dearfy.typing import Tag, Callback, Position
-from dearfy.base import Item, ItemKwargs, Enableable
+from dearfy.base import Item, ItemKwargs, Enableable, Showable
 from dearfy.functions import get_method_needed
 from dearfy.validator import ValidateKwargsAction
 # > Local Imports
@@ -10,25 +10,25 @@ from typing_extensions import Unpack
 
 # ! Button Class
 
-class Button(Item, Enableable):
+class Button(Item, Enableable, Showable):
     REFERENCE_METHOD = dpg.add_button
     VALIDATORS_KWARGS = (ValidateKwargsAction, )
 
     def __init__(
         self,
         *,
-        indent: int = -1,
-        show: bool = True,
-        pos: Position | None = None,
         width: int = 0,
         height: int = 0,
+        indent: int = -1,
         parent: Tag | None = None,
         before: Tag | None = None,
         payload_type: str = '$$DPG_PAYLOAD',
         callback: Callback | None = None,
         drag_callback: Callback | None = None,
         drop_callback: Callback | None = None,
+        show: bool = True,
         enabled: bool = True,
+        pos: Position | None = None,
         filter_key: str = '',
         tracked: bool = False,
         track_offset: float = 0.5,
@@ -62,18 +62,18 @@ class Button(Item, Enableable):
             repeat (bool, optional): Hold to continuosly repeat the click. Defaults to False.
         """
         super().__init__(
-            indent=indent,
-            show=show,
-            pos=field(pos, default_factory=list, nullable=False),
             width=width,
             height=height,
-            parent=field(parent, 0, nullable=False),
-            before=field(before, 0, nullable=False),
+            indent=indent,
+            parent=field(parent, 0),
+            before=field(before, 0),
             payload_type=payload_type,
             callback=callback,
             drag_callback=drag_callback,
             drop_callback=drop_callback,
+            show=show,
             enabled=enabled,
+            pos=field(pos, default_factory=list),
             filter_key=filter_key,
             tracked=tracked,
             track_offset=track_offset,

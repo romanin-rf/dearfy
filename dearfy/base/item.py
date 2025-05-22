@@ -8,7 +8,6 @@ from typing_extensions import Any, TypedDict, Callable, ParamSpecKwargs, NotRequ
 # > Local Imports
 from dearfy.field import field
 from dearfy.base.domnode import DOMNode
-from dearfy.base.handler import ItemHandler
 from dearfy.typing import Tag
 from dearfy.functions import formatting_kwargs, get_method_needed
 from dearfy.validator import ValidatorKwargsBase
@@ -26,9 +25,6 @@ class ItemKwargs(TypedDict):
 # ! Base Widget Class
 
 class Item(DOMNode):
-    NODE_CONTAINERABLE = True
-    NODE_CONTAINER_FOR = (ItemHandler, )
-    
     VALIDATORS_KWARGS: tuple[ValidatorKwargsType, ...] = ()
     REFERENCE_METHOD: Callable[..., Any] | None = None
     
@@ -37,7 +33,7 @@ class Item(DOMNode):
     def __init__(
         self,
         *,
-        label: str = '',
+        label: str | None = None,
         user_data: Any | None = None,
         use_internal_label: bool = True,
         tag: Tag | None = None,
@@ -117,17 +113,23 @@ class Item(DOMNode):
         for child in self._node_children:
             child.__dearfy_destroy__()
     
-    def get_item(self, tag: Tag, *, by_main: bool=False) -> Item:
+    def get_item(self, tag: Tag) -> Item:
         try:
-            node = self._node_main_parent if by_main else self
-            return node._get_node_by_attr('tag', tag)
+            return self._node_main_parent._get_node_by_attr('tag', tag)
         except AttributeError:
             pass
-        raise RuntimeError('There is no Item with this tag.')
+        raise RuntimeError(
+            "There is no Item with this tag.\n"
+            "Advance datas:\n"
+            f"\t- _node_main_parent={self._node_main_parent!r}\n"
+            f"\t- _node_parent={self._node_parent!r}\n"
+        )
     
     def _move_item_to(self, parent: Tag) -> None:
-        self._node_parent._remove_child(self)
-        self.get_item(parent, by_main=True)._add_child(self)
+        loguru.logger.trace(f'Move {self} to {parent!r}')
+        old_parent, new_parent = self._node_parent, self.get_item(parent)
+        old_parent._remove_child(self)
+        new_parent._add_child(self)
     
     def get_configuration(self) -> dict[str, Any]:
         return dpg.get_item_configuration(self._config['tag'])
@@ -144,11 +146,3 @@ class Item(DOMNode):
             self._state = 0
             if self._node_parent is not None:
                 self._node_parent._remove_child(self)
-    
-    def show(self) -> None:
-        if self.inited:
-            dpg.show_item(self.tag)
-    
-    def hide(self) -> None:
-        if self.inited:
-            dpg.hide_item(self.tag)
