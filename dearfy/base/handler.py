@@ -5,6 +5,7 @@ from typing_extensions import Any, TypedDict, NotRequired, Callable, Self, Unpac
 # > Local Imports
 from dearfy.field import field
 from dearfy.base.item import Item
+from dearfy.base.spetific import Showable
 from dearfy.typing import Tag, Callback
 from dearfy.validator import ValidatorKwargsBase, ValidateKwargsAction
 
@@ -14,10 +15,11 @@ class ItemHandlerKwargs(TypedDict):
     tag: NotRequired[Tag | None]
     parent: NotRequired[Tag | None]
     callback: NotRequired[Callback | None]
+    show: NotRequired[bool]
 
 # ! Handler Base Class
 
-class ItemHandler(Item):
+class ItemHandler(Item, Showable):
     NODE_CONTAINERABLE: bool = False
 
     REFERENCE_METHOD: Callable[..., Any] | None = None
@@ -29,11 +31,13 @@ class ItemHandler(Item):
         *,
         parent: Tag | None = None,
         callback: Callback | None = None,
+        show: bool = True,
         **kwargs: Unpack[ItemHandlerKwargs]
     ) -> None:
         super().__init__(
             parent=field(parent, 0, nullable=False),
             callback=callback,
+            show=show,
             **kwargs
         )
     
